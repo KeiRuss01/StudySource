@@ -1,0 +1,160 @@
+{% extends "study/student_base.html" %}
+
+{% block title %}
+    {{ page_title }} — StudySource
+{% endblock %}
+
+{% block topbar_title %}
+    {{ page_title }}
+{% endblock %}
+
+{% block content %}
+<section class="folder-form-page">
+    <nav
+        class="breadcrumb"
+        aria-label="Breadcrumb"
+    >
+        <a href="{% url 'student_dashboard' %}">
+            Dashboard
+        </a>
+
+        <span aria-hidden="true">/</span>
+
+        <a href="{% url 'folder_list' %}">
+            Research Folders
+        </a>
+
+        <span aria-hidden="true">/</span>
+
+        <span>{{ page_title }}</span>
+    </nav>
+
+    <div class="form-page-grid">
+        <div class="form-page-introduction">
+            <span class="eyebrow">
+                Research workspace
+            </span>
+
+            <h1>{{ page_title }}</h1>
+
+            {% if folder %}
+                <p>
+                    Update the folder name or description.
+                    The contents of the folder will remain unchanged.
+                </p>
+            {% else %}
+                <p>
+                    Create a dedicated workspace for references,
+                    notes, handwritten images, and deadlines related
+                    to one research topic.
+                </p>
+            {% endif %}
+
+            <div class="form-information-card">
+                <h2>What belongs in a folder?</h2>
+
+                <ul>
+                    <li>
+                        Saved academic papers and books
+                    </li>
+
+                    <li>
+                        Your own research and reading notes
+                    </li>
+
+                    <li>
+                        Images of handwritten notes
+                    </li>
+
+                    <li>
+                        Research deadlines and calendar events
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="folder-form-card">
+            {% if form.non_field_errors %}
+                <div
+                    class="form-alert"
+                    role="alert"
+                >
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <form
+                method="post"
+                class="folder-form"
+                novalidate
+            >
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="{{ form.name.id_for_label }}">
+                        {{ form.name.label }}
+                    </label>
+
+                    {{ form.name }}
+
+                    <span class="field-character-hint">
+                        Use a clear name that identifies the topic.
+                    </span>
+
+                    {% for error in form.name.errors %}
+                        <span class="field-error">
+                            {{ error }}
+                        </span>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.description.id_for_label }}">
+                        {{ form.description.label }}
+                    </label>
+
+                    {{ form.description }}
+
+                    <span class="field-character-hint">
+                        Optional. Explain the focus or purpose
+                        of this research folder.
+                    </span>
+
+                    {% for error in form.description.errors %}
+                        <span class="field-error">
+                            {{ error }}
+                        </span>
+                    {% endfor %}
+                </div>
+
+                <div class="form-actions">
+                    {% if folder %}
+                        <a
+                            class="button button-ghost"
+                            href="{% url 'folder_detail' folder.id %}"
+                        >
+                            Cancel
+                        </a>
+                    {% else %}
+                        <a
+                            class="button button-ghost"
+                            href="{% url 'folder_list' %}"
+                        >
+                            Cancel
+                        </a>
+                    {% endif %}
+
+                    <button
+                        class="button button-primary"
+                        type="submit"
+                    >
+                        {{ submit_label }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

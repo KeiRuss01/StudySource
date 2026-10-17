@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -16,6 +17,7 @@ class UserManager(BaseUserManager):
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
+
         return user
 
     def create_superuser(self, email, password=None, **extra_fields):
@@ -28,9 +30,15 @@ class UserManager(BaseUserManager):
             raise ValueError("A superuser must have is_staff=True.")
 
         if extra_fields.get("is_superuser") is not True:
-            raise ValueError("A superuser must have is_superuser=True.")
+            raise ValueError(
+                "A superuser must have is_superuser=True."
+            )
 
-        return self.create_user(email, password, **extra_fields)
+        return self.create_user(
+            email,
+            password,
+            **extra_fields,
+        )
 
 
 class User(AbstractUser):
@@ -57,3 +65,27 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.email
+
+
+class ResearchFolder(models.Model):
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="research_folders",
+    )
+    name = models.CharField(max_length=150)
+    description = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-updated_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["owner", "name"],
+                name="unique_folder_name_per_owner",
+            )
+        ]
+
+    def __str__(self):
+        return self.name

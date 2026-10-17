@@ -1,0 +1,125 @@
+{% extends "study/student_base.html" %}
+
+{% block title %}
+    Research Folders — StudySource
+{% endblock %}
+
+{% block topbar_title %}
+    Research Folders
+{% endblock %}
+
+{% block content %}
+<section class="folder-list-page">
+    <div class="page-heading-row">
+        <div>
+            <span class="eyebrow">
+                My Research Folders
+            </span>
+
+            <h1>Keep every project organized.</h1>
+
+            <p>
+                Create a separate workspace for each research
+                topic, assignment, or long-term project.
+            </p>
+        </div>
+
+        <a
+            class="button button-primary"
+            href="{% url 'folder_create' %}"
+        >
+            + Create folder
+        </a>
+    </div>
+
+    {% if folders %}
+        <div class="folder-grid">
+            {% for folder in folders %}
+                <article class="folder-card">
+                    <div class="folder-card-header">
+                        <span
+                            class="folder-card-icon"
+                            aria-hidden="true"
+                        >
+                            F
+                        </span>
+
+                        <div class="folder-card-menu">
+                            <a
+                                href="{% url 'folder_update' folder.id %}"
+                                aria-label="Edit {{ folder.name }}"
+                            >
+                                Edit
+                            </a>
+
+                            <a
+                                class="danger-link"
+                                href="{% url 'folder_delete' folder.id %}"
+                                aria-label="Delete {{ folder.name }}"
+                            >
+                                Delete
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="folder-card-body">
+                        <h2>{{ folder.name }}</h2>
+
+                        {% if folder.description %}
+                            <p>
+                                {{ folder.description|truncatechars:150 }}
+                            </p>
+                        {% else %}
+                            <p class="muted-text">
+                                No description was provided.
+                            </p>
+                        {% endif %}
+                    </div>
+
+                    <div class="folder-card-meta">
+                        <span>
+                            <strong>0</strong>
+                            references
+                        </span>
+
+                        <span>
+                            Updated
+                            {{ folder.updated_at|date:"M j, Y" }}
+                        </span>
+                    </div>
+
+                    <a
+                        class="button button-ghost button-full"
+                        href="{% url 'folder_detail' folder.id %}"
+                    >
+                        Open folder
+                    </a>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <section class="panel folder-empty-state">
+            <div
+                class="empty-icon"
+                aria-hidden="true"
+            >
+                F
+            </div>
+
+            <h2>No research folders yet</h2>
+
+            <p>
+                Start by creating a folder for a research topic,
+                subject, assignment, or personal reading project.
+            </p>
+
+            <a
+                class="button button-primary"
+                href="{% url 'folder_create' %}"
+            >
+                Create your first folder
+            </a>
+        </section>
+    {% endif %}
+</section>
+{% endblock %}

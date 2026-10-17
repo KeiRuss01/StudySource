@@ -1,43 +1,210 @@
-{% extends "study/base.html" %}
+{% extends "study/student_base.html" %}
 
-{% block title %}Dashboard — StudySource{% endblock %}
+{% block title %}
+    Dashboard — StudySource
+{% endblock %}
+
+{% block topbar_title %}
+    Dashboard
+{% endblock %}
 
 {% block content %}
 <section class="dashboard-page">
-    <div class="container">
-        <div class="dashboard-heading">
-            <div>
-                <span class="eyebrow">Student dashboard</span>
-                <h1>Welcome, {{ user.full_name }}.</h1>
-                <p>Your research workspace is ready. Start by creating your first folder.</p>
+    <div class="dashboard-heading">
+        <div>
+            <span class="eyebrow">
+                Student dashboard
+            </span>
+
+            <h1>
+                Welcome, {{ user.full_name }}.
+            </h1>
+
+            <p>
+                Organize your sources, notes, images,
+                and deadlines in research folders.
+            </p>
+        </div>
+
+        <a
+            class="button button-primary"
+            href="{% url 'folder_create' %}"
+        >
+            + New research folder
+        </a>
+    </div>
+
+    <div class="stat-grid">
+        <article class="stat-card">
+            <span>Research folders</span>
+
+            <strong>{{ folder_count }}</strong>
+
+            <small>Organized projects</small>
+        </article>
+
+        <article class="stat-card">
+            <span>Saved references</span>
+
+            <strong>{{ reference_count }}</strong>
+
+            <small>Papers and books</small>
+        </article>
+
+        <article class="stat-card">
+            <span>Research notes</span>
+
+            <strong>{{ note_count }}</strong>
+
+            <small>Your own writing</small>
+        </article>
+
+        <article class="stat-card">
+            <span>Upcoming deadlines</span>
+
+            <strong>{{ upcoming_deadline_count }}</strong>
+
+            <small>Tasks still due</small>
+        </article>
+    </div>
+
+    <div class="dashboard-grid">
+        <section class="panel dashboard-folders-panel">
+            <div class="panel-heading">
+                <div>
+                    <span class="eyebrow">
+                        Recently updated
+                    </span>
+
+                    <h2>Research folders</h2>
+                </div>
+
+                {% if recent_folders %}
+                    <a
+                        class="text-link"
+                        href="{% url 'folder_list' %}"
+                    >
+                        View all folders →
+                    </a>
+                {% endif %}
             </div>
-            <button class="button button-primary" type="button" disabled>+ New research folder</button>
-        </div>
 
-        <div class="stat-grid">
-            <article class="stat-card"><span>Research folders</span><strong>{{ folder_count }}</strong><small>Organized projects</small></article>
-            <article class="stat-card"><span>Saved references</span><strong>{{ reference_count }}</strong><small>Papers and books</small></article>
-            <article class="stat-card"><span>Research notes</span><strong>{{ note_count }}</strong><small>Your own writing</small></article>
-            <article class="stat-card"><span>Upcoming deadlines</span><strong>{{ upcoming_deadline_count }}</strong><small>Tasks still due</small></article>
-        </div>
+            {% if recent_folders %}
+                <div class="dashboard-folder-list">
+                    {% for folder in recent_folders %}
+                        <a
+                            class="dashboard-folder-card"
+                            href="{% url 'folder_detail' folder.id %}"
+                        >
+                            <span
+                                class="folder-card-icon"
+                                aria-hidden="true"
+                            >
+                                F
+                            </span>
 
-        <div class="dashboard-grid">
-            <section class="panel empty-panel">
-                <div class="empty-icon">F</div>
-                <h2>No research folders yet</h2>
-                <p>Folder creation is the next module we will build. Your folders will appear here.</p>
-                <button class="button button-primary" type="button" disabled>Create first folder</button>
-            </section>
-            <aside class="panel next-steps">
-                <span class="eyebrow">Coming next</span>
-                <h2>Your research workflow</h2>
-                <ol>
-                    <li><span>1</span>Create a research folder</li>
-                    <li><span>2</span>Find and save a reference</li>
-                    <li><span>3</span>Add notes and a deadline</li>
-                </ol>
-            </aside>
-        </div>
+                            <div class="dashboard-folder-information">
+                                <strong>{{ folder.name }}</strong>
+
+                                {% if folder.description %}
+                                    <p>
+                                        {{ folder.description|truncatechars:100 }}
+                                    </p>
+                                {% else %}
+                                    <p>
+                                        No description was provided.
+                                    </p>
+                                {% endif %}
+
+                                <small>
+                                    Updated
+                                    {{ folder.updated_at|date:"M j, Y" }}
+                                    at
+                                    {{ folder.updated_at|time:"g:i A" }}
+                                </small>
+                            </div>
+
+                            <span
+                                class="folder-card-arrow"
+                                aria-hidden="true"
+                            >
+                                →
+                            </span>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-panel dashboard-empty-state">
+                    <div
+                        class="empty-icon"
+                        aria-hidden="true"
+                    >
+                        F
+                    </div>
+
+                    <h2>No research folders yet</h2>
+
+                    <p>
+                        Create a folder to organize references,
+                        research notes, images, and deadlines for
+                        your first project.
+                    </p>
+
+                    <a
+                        class="button button-primary"
+                        href="{% url 'folder_create' %}"
+                    >
+                        Create your first folder
+                    </a>
+                </div>
+            {% endif %}
+        </section>
+
+        <aside class="panel next-steps">
+            <span class="eyebrow">
+                Research workflow
+            </span>
+
+            <h2>Your next steps</h2>
+
+            <ol>
+                <li>
+                    <span>1</span>
+
+                    <div>
+                        <strong>Create a research folder</strong>
+
+                        <p>
+                            Give your topic a dedicated workspace.
+                        </p>
+                    </div>
+                </li>
+
+                <li>
+                    <span>2</span>
+
+                    <div>
+                        <strong>Find useful references</strong>
+
+                        <p>
+                            Search for papers, books, or a DOI.
+                        </p>
+                    </div>
+                </li>
+
+                <li>
+                    <span>3</span>
+
+                    <div>
+                        <strong>Add notes and deadlines</strong>
+
+                        <p>
+                            Keep your own work connected to the project.
+                        </p>
+                    </div>
+                </li>
+            </ol>
+        </aside>
     </div>
 </section>
 {% endblock %}

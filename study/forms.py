@@ -1,7 +1,10 @@
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.forms import (
+    AuthenticationForm,
+    UserCreationForm,
+)
 
-from .models import User
+from .models import ResearchFolder, User
 
 
 class SignUpForm(UserCreationForm):
@@ -101,3 +104,67 @@ class EmailAuthenticationForm(AuthenticationForm):
             }
         ),
     )
+
+
+class ResearchFolderForm(forms.ModelForm):
+    name = forms.CharField(
+        max_length=150,
+        label="Folder name",
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Example: Dengue Research",
+                "autocomplete": "off",
+            }
+        ),
+    )
+
+    description = forms.CharField(
+        required=False,
+        label="Description",
+        widget=forms.Textarea(
+            attrs={
+                "placeholder": (
+                    "Briefly describe the topic or purpose "
+                    "of this research folder."
+                ),
+                "rows": 5,
+            }
+        ),
+    )
+
+    class Meta:
+        model = ResearchFolder
+        fields = (
+            "name",
+            "description",
+        )
+
+    def __init__(self, *args, owner=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.owner = owner
+
+    def clean_name(self):
+        name = self.cleaned_data["name"].strip()
+
+        if not name:
+            raise forms.ValidationError(
+                "Please enter a folder name."
+            )
+
+        if self.owner:
+            matching_folders = ResearchFolder.objects.filter(
+                owner=self.owner,
+                name__iexact=name,
+            )
+
+            if self.instance.pk:
+                matching_folders = matching_folders.exclude(
+                    pk=self.instance.pk
+                )
+
+            if matching_folders.exists():
+                raise forms.ValidationError(
+                    "You already have a folder with this name."
+                )
+
+        return name

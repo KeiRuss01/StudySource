@@ -1,0 +1,105 @@
+{% extends "study/student_base.html" %}
+
+{% block title %}
+    Delete {{ folder.name }} — StudySource
+{% endblock %}
+
+{% block topbar_title %}
+    Delete Research Folder
+{% endblock %}
+
+{% block content %}
+<section class="delete-page">
+    <nav
+        class="breadcrumb"
+        aria-label="Breadcrumb"
+    >
+        <a href="{% url 'student_dashboard' %}">
+            Dashboard
+        </a>
+
+        <span aria-hidden="true">/</span>
+
+        <a href="{% url 'folder_list' %}">
+            Research Folders
+        </a>
+
+        <span aria-hidden="true">/</span>
+
+        <a href="{% url 'folder_detail' folder.id %}">
+            {{ folder.name }}
+        </a>
+
+        <span aria-hidden="true">/</span>
+
+        <span>Delete</span>
+    </nav>
+
+    <div class="delete-card">
+        <div
+            class="delete-warning-icon"
+            aria-hidden="true"
+        >
+            !
+        </div>
+
+        <span class="eyebrow delete-eyebrow">
+            Delete research folder
+        </span>
+
+        <h1>
+            Delete “{{ folder.name }}”?
+        </h1>
+
+        <p class="delete-introduction">
+            This action cannot be undone. The folder will be
+            permanently removed from your StudySource account.
+        </p>
+
+        <div class="delete-effects">
+            <h2>What will happen?</h2>
+
+            <ul>
+                <li>
+                    The research folder will be deleted.
+                </li>
+
+                <li>
+                    Its folder-reference connections will be removed.
+                </li>
+
+                <li>
+                    Folder notes, image records, and local deadlines
+                    will be deleted when those modules are added.
+                </li>
+
+                <li>
+                    Saved references will remain available in your
+                    overall Saved References library.
+                </li>
+            </ul>
+        </div>
+
+        <form
+            method="post"
+            class="delete-form-actions"
+        >
+            {% csrf_token %}
+
+            <a
+                class="button button-ghost"
+                href="{% url 'folder_detail' folder.id %}"
+            >
+                Cancel
+            </a>
+
+            <button
+                class="button button-danger"
+                type="submit"
+            >
+                Delete folder
+            </button>
+        </form>
+    </div>
+</section>
+{% endblock %}

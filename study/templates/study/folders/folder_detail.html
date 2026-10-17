@@ -1,0 +1,334 @@
+{% extends "study/student_base.html" %}
+
+{% block title %}
+    {{ folder.name }} — StudySource
+{% endblock %}
+
+{% block topbar_title %}
+    Research Folder
+{% endblock %}
+
+{% block content %}
+<section class="folder-detail-page">
+    <nav
+        class="breadcrumb"
+        aria-label="Breadcrumb"
+    >
+        <a href="{% url 'student_dashboard' %}">
+            Dashboard
+        </a>
+
+        <span aria-hidden="true">/</span>
+
+        <a href="{% url 'folder_list' %}">
+            Research Folders
+        </a>
+
+        <span aria-hidden="true">/</span>
+
+        <span>{{ folder.name }}</span>
+    </nav>
+
+    <div class="folder-detail-heading">
+        <div class="folder-detail-title">
+            <span
+                class="folder-detail-icon"
+                aria-hidden="true"
+            >
+                F
+            </span>
+
+            <div>
+                <span class="eyebrow">
+                    Research folder
+                </span>
+
+                <h1>{{ folder.name }}</h1>
+
+                {% if folder.description %}
+                    <p>{{ folder.description }}</p>
+                {% else %}
+                    <p class="muted-text">
+                        No description was provided for this folder.
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="folder-detail-actions">
+            <a
+                class="button button-ghost"
+                href="{% url 'folder_update' folder.id %}"
+            >
+                Edit folder
+            </a>
+
+            <a
+                class="button button-danger-outline"
+                href="{% url 'folder_delete' folder.id %}"
+            >
+                Delete
+            </a>
+        </div>
+    </div>
+
+    <div class="folder-summary-grid">
+        <article class="folder-summary-card">
+            <span>References</span>
+
+            <strong>{{ reference_count }}</strong>
+        </article>
+
+        <article class="folder-summary-card">
+            <span>Notes</span>
+
+            <strong>{{ note_count }}</strong>
+        </article>
+
+        <article class="folder-summary-card">
+            <span>Images</span>
+
+            <strong>{{ image_count }}</strong>
+        </article>
+
+        <article class="folder-summary-card">
+            <span>Deadlines</span>
+
+            <strong>{{ deadline_count }}</strong>
+        </article>
+    </div>
+
+    <div class="folder-tabs">
+        <button
+            class="folder-tab active"
+            type="button"
+            data-folder-tab="references"
+        >
+            References
+            <span>{{ reference_count }}</span>
+        </button>
+
+        <button
+            class="folder-tab"
+            type="button"
+            data-folder-tab="notes"
+        >
+            Notes
+            <span>{{ note_count }}</span>
+        </button>
+
+        <button
+            class="folder-tab"
+            type="button"
+            data-folder-tab="images"
+        >
+            Images
+            <span>{{ image_count }}</span>
+        </button>
+
+        <button
+            class="folder-tab"
+            type="button"
+            data-folder-tab="deadlines"
+        >
+            Deadlines
+            <span>{{ deadline_count }}</span>
+        </button>
+    </div>
+
+    <div class="folder-tab-content">
+        <section
+            class="folder-tab-panel active"
+            data-folder-panel="references"
+        >
+            <div class="folder-content-heading">
+                <div>
+                    <h2>References</h2>
+
+                    <p>
+                        Papers and books saved to this folder
+                        will appear here.
+                    </p>
+                </div>
+
+                <button
+                    class="button button-primary"
+                    type="button"
+                    disabled
+                >
+                    + Find a reference
+                </button>
+            </div>
+
+            <div class="folder-content-empty">
+                <div
+                    class="empty-icon"
+                    aria-hidden="true"
+                >
+                    R
+                </div>
+
+                <h3>No references saved yet</h3>
+
+                <p>
+                    OpenAlex paper search will be added after
+                    the folder module is complete.
+                </p>
+            </div>
+        </section>
+
+        <section
+            class="folder-tab-panel"
+            data-folder-panel="notes"
+        >
+            <div class="folder-content-heading">
+                <div>
+                    <h2>Notes</h2>
+
+                    <p>
+                        Your research notes for this folder
+                        will appear here.
+                    </p>
+                </div>
+
+                <button
+                    class="button button-primary"
+                    type="button"
+                    disabled
+                >
+                    + Create note
+                </button>
+            </div>
+
+            <div class="folder-content-empty">
+                <div
+                    class="empty-icon"
+                    aria-hidden="true"
+                >
+                    N
+                </div>
+
+                <h3>No notes created yet</h3>
+
+                <p>
+                    Note creation will be available in a
+                    later module.
+                </p>
+            </div>
+        </section>
+
+        <section
+            class="folder-tab-panel"
+            data-folder-panel="images"
+        >
+            <div class="folder-content-heading">
+                <div>
+                    <h2>Images</h2>
+
+                    <p>
+                        Images of handwritten notes will appear here.
+                    </p>
+                </div>
+
+                <button
+                    class="button button-primary"
+                    type="button"
+                    disabled
+                >
+                    + Upload image
+                </button>
+            </div>
+
+            <div class="folder-content-empty">
+                <div
+                    class="empty-icon"
+                    aria-hidden="true"
+                >
+                    I
+                </div>
+
+                <h3>No images uploaded yet</h3>
+
+                <p>
+                    Cloudinary image uploads will be added
+                    after note CRUD.
+                </p>
+            </div>
+        </section>
+
+        <section
+            class="folder-tab-panel"
+            data-folder-panel="deadlines"
+        >
+            <div class="folder-content-heading">
+                <div>
+                    <h2>Deadlines</h2>
+
+                    <p>
+                        Research deadlines for this folder
+                        will appear here.
+                    </p>
+                </div>
+
+                <button
+                    class="button button-primary"
+                    type="button"
+                    disabled
+                >
+                    + Add deadline
+                </button>
+            </div>
+
+            <div class="folder-content-empty">
+                <div
+                    class="empty-icon"
+                    aria-hidden="true"
+                >
+                    D
+                </div>
+
+                <h3>No deadlines created yet</h3>
+
+                <p>
+                    Local deadlines and Google Calendar
+                    synchronization will be added later.
+                </p>
+            </div>
+        </section>
+    </div>
+</section>
+
+<script>
+    const folderTabs = document.querySelectorAll(
+        "[data-folder-tab]"
+    );
+
+    const folderPanels = document.querySelectorAll(
+        "[data-folder-panel]"
+    );
+
+    folderTabs.forEach(function (tab) {
+        tab.addEventListener("click", function () {
+            const selectedTab = tab.dataset.folderTab;
+
+            folderTabs.forEach(function (item) {
+                item.classList.remove("active");
+            });
+
+            folderPanels.forEach(function (panel) {
+                panel.classList.remove("active");
+            });
+
+            tab.classList.add("active");
+
+            document
+                .querySelector(
+                    '[data-folder-panel="' +
+                    selectedTab +
+                    '"]'
+                )
+                .classList.add("active");
+        });
+    });
+</script>
+{% endblock %}

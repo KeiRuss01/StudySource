@@ -1,0 +1,305 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="StudySource student research workspace."
+    >
+
+    <title>
+        {% block title %}Student workspace — StudySource{% endblock %}
+    </title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{% static 'study/css/styles.css' %}?v=3"
+    >
+</head>
+
+<body class="student-body">
+    <div class="student-layout">
+        <aside
+            class="student-sidebar"
+            id="student-sidebar"
+            aria-label="Student navigation"
+        >
+            <div class="sidebar-header">
+                <a
+                    class="brand sidebar-brand"
+                    href="{% url 'student_dashboard' %}"
+                    aria-label="StudySource dashboard"
+                >
+                    <span class="brand-mark" aria-hidden="true">
+                        S
+                    </span>
+
+                    <span>StudySource</span>
+                </a>
+
+                <button
+                    class="sidebar-close"
+                    id="sidebar-close"
+                    type="button"
+                    aria-label="Close navigation"
+                >
+                    ×
+                </button>
+            </div>
+
+            <nav class="student-navigation">
+                <p class="sidebar-label">Workspace</p>
+
+                <a
+                    class="sidebar-link
+                    {% if request.resolver_match.url_name == 'student_dashboard' %}
+                        active
+                    {% endif %}"
+                    href="{% url 'student_dashboard' %}"
+                >
+                    <span
+                        class="sidebar-icon"
+                        aria-hidden="true"
+                    >
+                        D
+                    </span>
+
+                    <span>Dashboard</span>
+                </a>
+
+                <a
+                    class="sidebar-link
+                    {% if request.resolver_match.url_name == 'folder_list' %}
+                        active
+                    {% elif request.resolver_match.url_name == 'folder_create' %}
+                        active
+                    {% elif request.resolver_match.url_name == 'folder_detail' %}
+                        active
+                    {% elif request.resolver_match.url_name == 'folder_update' %}
+                        active
+                    {% elif request.resolver_match.url_name == 'folder_delete' %}
+                        active
+                    {% endif %}"
+                    href="{% url 'folder_list' %}"
+                >
+                    <span
+                        class="sidebar-icon"
+                        aria-hidden="true"
+                    >
+                        F
+                    </span>
+
+                    <span>Research Folders</span>
+                </a>
+
+                <p class="sidebar-label sidebar-label-spaced">
+                    Research
+                </p>
+
+                <span
+                    class="sidebar-link sidebar-link-disabled"
+                    title="This feature will be added next."
+                >
+                    <span
+                        class="sidebar-icon"
+                        aria-hidden="true"
+                    >
+                        S
+                    </span>
+
+                    <span>Find References</span>
+
+                    <small>Soon</small>
+                </span>
+
+                <span
+                    class="sidebar-link sidebar-link-disabled"
+                    title="This feature will be added later."
+                >
+                    <span
+                        class="sidebar-icon"
+                        aria-hidden="true"
+                    >
+                        R
+                    </span>
+
+                    <span>Saved References</span>
+
+                    <small>Soon</small>
+                </span>
+
+                <span
+                    class="sidebar-link sidebar-link-disabled"
+                    title="This feature will be added later."
+                >
+                    <span
+                        class="sidebar-icon"
+                        aria-hidden="true"
+                    >
+                        N
+                    </span>
+
+                    <span>Notes</span>
+
+                    <small>Soon</small>
+                </span>
+
+                <span
+                    class="sidebar-link sidebar-link-disabled"
+                    title="This feature will be added later."
+                >
+                    <span
+                        class="sidebar-icon"
+                        aria-hidden="true"
+                    >
+                        C
+                    </span>
+
+                    <span>Deadlines</span>
+
+                    <small>Soon</small>
+                </span>
+            </nav>
+
+            <div class="sidebar-account">
+                <div class="sidebar-user">
+                    <span
+                        class="user-avatar"
+                        aria-hidden="true"
+                    >
+                        {{ user.full_name|slice:":1"|upper }}
+                    </span>
+
+                    <div class="sidebar-user-details">
+                        <strong>{{ user.full_name }}</strong>
+                        <span>{{ user.email }}</span>
+                    </div>
+                </div>
+
+                <form
+                    method="post"
+                    action="{% url 'logout' %}"
+                >
+                    {% csrf_token %}
+
+                    <button
+                        class="sidebar-logout"
+                        type="submit"
+                    >
+                        Log out
+                    </button>
+                </form>
+            </div>
+        </aside>
+
+        <div
+            class="sidebar-overlay"
+            id="sidebar-overlay"
+        ></div>
+
+        <div class="student-main">
+            <header class="student-topbar">
+                <button
+                    class="sidebar-menu-button"
+                    id="sidebar-open"
+                    type="button"
+                    aria-label="Open navigation"
+                    aria-controls="student-sidebar"
+                    aria-expanded="false"
+                >
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+
+                <div class="topbar-title">
+                    {% block topbar_title %}
+                        Student workspace
+                    {% endblock %}
+                </div>
+
+                <div class="topbar-account">
+                    <span class="topbar-avatar">
+                        {{ user.full_name|slice:":1"|upper }}
+                    </span>
+
+                    <span class="topbar-name">
+                        {{ user.full_name }}
+                    </span>
+                </div>
+            </header>
+
+            {% if messages %}
+                <div
+                    class="student-messages"
+                    aria-live="polite"
+                >
+                    {% for message in messages %}
+                        <div
+                            class="message
+                            message-{{ message.tags|default:'info' }}"
+                        >
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <main class="student-content">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <script>
+        const sidebar = document.getElementById("student-sidebar");
+        const sidebarOpen = document.getElementById("sidebar-open");
+        const sidebarClose = document.getElementById("sidebar-close");
+        const sidebarOverlay = document.getElementById("sidebar-overlay");
+
+        function openSidebar() {
+            sidebar.classList.add("sidebar-visible");
+            sidebarOverlay.classList.add("sidebar-overlay-visible");
+            sidebarOpen.setAttribute("aria-expanded", "true");
+            document.body.classList.add("sidebar-is-open");
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove("sidebar-visible");
+            sidebarOverlay.classList.remove("sidebar-overlay-visible");
+            sidebarOpen.setAttribute("aria-expanded", "false");
+            document.body.classList.remove("sidebar-is-open");
+        }
+
+        sidebarOpen.addEventListener("click", openSidebar);
+        sidebarClose.addEventListener("click", closeSidebar);
+        sidebarOverlay.addEventListener("click", closeSidebar);
+
+        window.addEventListener("keydown", function (event) {
+            if (event.key === "Escape") {
+                closeSidebar();
+            }
+        });
+    </script>
+</body>
+</html>
