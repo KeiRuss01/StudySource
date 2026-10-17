@@ -1,0 +1,436 @@
+{% extends "study/student_base.html" %}
+
+{% block title %}
+    Find Papers — StudySource
+{% endblock %}
+
+{% block topbar_title %}
+    Find References
+{% endblock %}
+
+{% block content %}
+<section class="reference-search-page">
+    <div class="page-heading-row">
+        <div>
+            <span class="eyebrow">
+                Find References
+            </span>
+
+            <h1>Search for academic papers.</h1>
+
+            <p>
+                Search OpenAlex for scholarly works, review their
+                publication details, and save useful references to
+                your research workspace.
+            </p>
+        </div>
+
+        <a
+            class="button button-ghost"
+            href="{% url 'saved_reference_list' %}"
+        >
+            View saved references
+        </a>
+    </div>
+
+    <div
+        class="reference-provider-tabs"
+        aria-label="Reference search services"
+    >
+        <a
+            class="reference-provider-tab active"
+            href="{% url 'paper_search' %}"
+        >
+            Papers
+            <small>OpenAlex</small>
+        </a>
+
+        <span
+            class="reference-provider-tab disabled"
+            title="Google Books search will be added later."
+        >
+            Books
+            <small>Google Books</small>
+        </span>
+
+        <span
+            class="reference-provider-tab disabled"
+            title="Crossref DOI lookup will be added later."
+        >
+            DOI Lookup
+            <small>Crossref</small>
+        </span>
+    </div>
+
+    <section class="paper-search-panel">
+        <form
+            method="get"
+            action="{% url 'paper_search' %}"
+            class="paper-search-form"
+            role="search"
+        >
+            <div class="paper-search-input-wrapper">
+                <label
+                    class="visually-hidden"
+                    for="paper-search-input"
+                >
+                    Search academic papers
+                </label>
+
+                <span
+                    class="search-field-icon"
+                    aria-hidden="true"
+                >
+                    S
+                </span>
+
+                <input
+                    id="paper-search-input"
+                    type="search"
+                    name="q"
+                    value="{{ query }}"
+                    maxlength="200"
+                    placeholder="Search by topic, title, author, or keyword"
+                    autocomplete="off"
+                    required
+                >
+            </div>
+
+            <button
+                class="button button-primary paper-search-button"
+                type="submit"
+            >
+                Search papers
+            </button>
+        </form>
+
+        <p class="search-provider-note">
+            Results are provided by OpenAlex. Availability differs
+            between publishers and individual records.
+        </p>
+    </section>
+
+    {% if search_error %}
+        <div
+            class="search-error-panel"
+            role="alert"
+        >
+            <div
+                class="search-error-icon"
+                aria-hidden="true"
+            >
+                !
+            </div>
+
+            <div>
+                <h2>Search unavailable</h2>
+
+                <p>{{ search_error }}</p>
+            </div>
+        </div>
+    {% elif search_performed %}
+        <div class="search-results-heading">
+            <div>
+                <span class="eyebrow">
+                    OpenAlex results
+                </span>
+
+                <h2>
+                    Results for “{{ query }}”
+                </h2>
+            </div>
+
+            <p>
+                {{ total_results }} result{{ total_results|pluralize }}
+                found
+            </p>
+        </div>
+
+        {% if results %}
+            <div class="paper-result-list">
+                {% for result in results %}
+                    <article class="paper-result-card">
+                        <div class="paper-result-main">
+                            <div class="paper-result-badges">
+                                <span class="result-provider-badge">
+                                    OpenAlex
+                                </span>
+
+                                {% if result.reference_type %}
+                                    <span class="result-neutral-badge">
+                                        {{ result.reference_type|title }}
+                                    </span>
+                                {% endif %}
+
+                                {% if result.is_open_access %}
+                                    <span class="result-open-badge">
+                                        Open access
+                                    </span>
+                                {% endif %}
+                            </div>
+
+                            <h3>
+                                {% if result.title %}
+                                    {{ result.title }}
+                                {% else %}
+                                    Title not available
+                                {% endif %}
+                            </h3>
+
+                            <dl class="paper-metadata">
+                                <div>
+                                    <dt>Authors</dt>
+
+                                    <dd>
+                                        {% if result.authors %}
+                                            {{ result.authors|join:", " }}
+                                        {% else %}
+                                            Not available
+                                        {% endif %}
+                                    </dd>
+                                </div>
+
+                                <div>
+                                    <dt>Year</dt>
+
+                                    <dd>
+                                        {% if result.publication_year %}
+                                            {{ result.publication_year }}
+                                        {% else %}
+                                            Not available
+                                        {% endif %}
+                                    </dd>
+                                </div>
+
+                                <div>
+                                    <dt>Source</dt>
+
+                                    <dd>
+                                        {% if result.source_name %}
+                                            {{ result.source_name }}
+                                        {% else %}
+                                            Not available
+                                        {% endif %}
+                                    </dd>
+                                </div>
+
+                                <div>
+                                    <dt>DOI</dt>
+
+                                    <dd>
+                                        {% if result.doi %}
+                                            {{ result.doi }}
+                                        {% else %}
+                                            Not available
+                                        {% endif %}
+                                    </dd>
+                                </div>
+                            </dl>
+
+                            <div class="paper-description">
+                                <h4>Abstract</h4>
+
+                                {% if result.description %}
+                                    <p>
+                                        {{ result.description|truncatewords:80 }}
+                                    </p>
+                                {% else %}
+                                    <p class="muted-text">
+                                        Abstract not available.
+                                    </p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="paper-result-actions">
+                            <div class="paper-external-actions">
+                                {% if result.source_url %}
+                                    <a
+                                        class="button button-ghost"
+                                        href="{{ result.source_url }}"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        View source
+                                    </a>
+                                {% else %}
+                                    <button
+                                        class="button button-ghost"
+                                        type="button"
+                                        disabled
+                                    >
+                                        Source unavailable
+                                    </button>
+                                {% endif %}
+
+                                {% if result.open_access_url %}
+                                    <a
+                                        class="button button-open-access"
+                                        href="{{ result.open_access_url }}"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        Open-access copy
+                                    </a>
+                                {% endif %}
+                            </div>
+
+                            {% if result.external_id %}
+                                <form
+                                    method="post"
+                                    action="{% url 'save_openalex_reference' %}"
+                                    class="save-reference-form"
+                                >
+                                    {% csrf_token %}
+
+                                    <input
+                                        type="hidden"
+                                        name="external_id"
+                                        value="{{ result.external_id }}"
+                                    >
+
+                                    <input
+                                        type="hidden"
+                                        name="return_query"
+                                        value="{{ query }}"
+                                    >
+
+                                    <input
+                                        type="hidden"
+                                        name="return_page"
+                                        value="{{ page }}"
+                                    >
+
+                                    <div class="save-reference-field">
+                                        <label
+                                            for="folder-{{ forloop.counter }}"
+                                        >
+                                            Save to a research folder
+                                        </label>
+
+                                        <select
+                                            id="folder-{{ forloop.counter }}"
+                                            name="folder"
+                                            class="save-reference-select"
+                                        >
+                                            <option value="">
+                                                Save without a folder
+                                            </option>
+
+                                            {% for folder in folders %}
+                                                <option value="{{ folder.id }}">
+                                                    {{ folder.name }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+
+                                    <button
+                                        class="button button-primary"
+                                        type="submit"
+                                    >
+                                        Save reference
+                                    </button>
+                                </form>
+                            {% else %}
+                                <button
+                                    class="button button-primary"
+                                    type="button"
+                                    disabled
+                                    title="This result does not have a valid OpenAlex ID."
+                                >
+                                    Cannot save
+                                </button>
+                            {% endif %}
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+
+            {% if has_previous or has_next %}
+                <nav
+                    class="search-pagination"
+                    aria-label="Search-result pages"
+                >
+                    <div>
+                        {% if has_previous %}
+                            <a
+                                class="button button-ghost"
+                                href="?q={{ query|urlencode }}&amp;page={{ page|add:'-1' }}"
+                            >
+                                ← Previous
+                            </a>
+                        {% endif %}
+                    </div>
+
+                    <span>
+                        Page {{ page }}
+                    </span>
+
+                    <div>
+                        {% if has_next %}
+                            <a
+                                class="button button-ghost"
+                                href="?q={{ query|urlencode }}&amp;page={{ page|add:'1' }}"
+                            >
+                                Next →
+                            </a>
+                        {% endif %}
+                    </div>
+                </nav>
+            {% endif %}
+        {% else %}
+            <section class="search-empty-panel">
+                <div
+                    class="empty-icon"
+                    aria-hidden="true"
+                >
+                    S
+                </div>
+
+                <h2>No papers found</h2>
+
+                <p>
+                    Try a broader topic, a different spelling,
+                    or fewer search terms.
+                </p>
+            </section>
+        {% endif %}
+    {% else %}
+        <section class="search-welcome-panel">
+            <div class="search-welcome-content">
+                <div
+                    class="search-welcome-icon"
+                    aria-hidden="true"
+                >
+                    S
+                </div>
+
+                <h2>Start with a research topic.</h2>
+
+                <p>
+                    Search for a topic such as dengue prevention,
+                    system integration, climate change, or Japanese
+                    language education.
+                </p>
+            </div>
+
+            <div class="search-suggestions">
+                <span>Example searches</span>
+
+                <a href="?q=dengue+prevention">
+                    Dengue prevention
+                </a>
+
+                <a href="?q=system+integration">
+                    System integration
+                </a>
+
+                <a href="?q=Japanese+language+education">
+                    Japanese language education
+                </a>
+            </div>
+        </section>
+    {% endif %}
+</section>
+{% endblock %}

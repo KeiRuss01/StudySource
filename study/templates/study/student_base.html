@@ -18,7 +18,10 @@
         {% block title %}Student workspace — StudySource{% endblock %}
     </title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
 
     <link
         rel="preconnect"
@@ -33,7 +36,12 @@
 
     <link
         rel="stylesheet"
-        href="{% static 'study/css/styles.css' %}?v=3"
+        href="{% static 'study/css/styles.css' %}?v=5"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{% static 'study/css/references.css' %}?v=1"
     >
 </head>
 
@@ -50,7 +58,10 @@
                     href="{% url 'student_dashboard' %}"
                     aria-label="StudySource dashboard"
                 >
-                    <span class="brand-mark" aria-hidden="true">
+                    <span
+                        class="brand-mark"
+                        aria-hidden="true"
+                    >
                         S
                     </span>
 
@@ -68,7 +79,9 @@
             </div>
 
             <nav class="student-navigation">
-                <p class="sidebar-label">Workspace</p>
+                <p class="sidebar-label">
+                    Workspace
+                </p>
 
                 <a
                     class="sidebar-link
@@ -116,9 +129,14 @@
                     Research
                 </p>
 
-                <span
-                    class="sidebar-link sidebar-link-disabled"
-                    title="This feature will be added next."
+                <a
+                    class="sidebar-link
+                    {% if request.resolver_match.url_name == 'paper_search' %}
+                        active
+                    {% elif request.resolver_match.url_name == 'save_openalex_reference' %}
+                        active
+                    {% endif %}"
+                    href="{% url 'paper_search' %}"
                 >
                     <span
                         class="sidebar-icon"
@@ -128,13 +146,14 @@
                     </span>
 
                     <span>Find References</span>
+                </a>
 
-                    <small>Soon</small>
-                </span>
-
-                <span
-                    class="sidebar-link sidebar-link-disabled"
-                    title="This feature will be added later."
+                <a
+                    class="sidebar-link
+                    {% if request.resolver_match.url_name == 'saved_reference_list' %}
+                        active
+                    {% endif %}"
+                    href="{% url 'saved_reference_list' %}"
                 >
                     <span
                         class="sidebar-icon"
@@ -144,13 +163,11 @@
                     </span>
 
                     <span>Saved References</span>
-
-                    <small>Soon</small>
-                </span>
+                </a>
 
                 <span
                     class="sidebar-link sidebar-link-disabled"
-                    title="This feature will be added later."
+                    title="The Notes module will be added later."
                 >
                     <span
                         class="sidebar-icon"
@@ -166,7 +183,7 @@
 
                 <span
                     class="sidebar-link sidebar-link-disabled"
-                    title="This feature will be added later."
+                    title="The Deadlines module will be added later."
                 >
                     <span
                         class="sidebar-icon"
@@ -191,8 +208,13 @@
                     </span>
 
                     <div class="sidebar-user-details">
-                        <strong>{{ user.full_name }}</strong>
-                        <span>{{ user.email }}</span>
+                        <strong>
+                            {{ user.full_name }}
+                        </strong>
+
+                        <span>
+                            {{ user.email }}
+                        </span>
                     </div>
                 </div>
 
@@ -272,34 +294,79 @@
     </div>
 
     <script>
-        const sidebar = document.getElementById("student-sidebar");
-        const sidebarOpen = document.getElementById("sidebar-open");
-        const sidebarClose = document.getElementById("sidebar-close");
-        const sidebarOverlay = document.getElementById("sidebar-overlay");
+        const sidebar = document.getElementById(
+            "student-sidebar"
+        );
+
+        const sidebarOpen = document.getElementById(
+            "sidebar-open"
+        );
+
+        const sidebarClose = document.getElementById(
+            "sidebar-close"
+        );
+
+        const sidebarOverlay = document.getElementById(
+            "sidebar-overlay"
+        );
 
         function openSidebar() {
             sidebar.classList.add("sidebar-visible");
-            sidebarOverlay.classList.add("sidebar-overlay-visible");
-            sidebarOpen.setAttribute("aria-expanded", "true");
-            document.body.classList.add("sidebar-is-open");
+
+            sidebarOverlay.classList.add(
+                "sidebar-overlay-visible"
+            );
+
+            sidebarOpen.setAttribute(
+                "aria-expanded",
+                "true"
+            );
+
+            document.body.classList.add(
+                "sidebar-is-open"
+            );
         }
 
         function closeSidebar() {
             sidebar.classList.remove("sidebar-visible");
-            sidebarOverlay.classList.remove("sidebar-overlay-visible");
-            sidebarOpen.setAttribute("aria-expanded", "false");
-            document.body.classList.remove("sidebar-is-open");
+
+            sidebarOverlay.classList.remove(
+                "sidebar-overlay-visible"
+            );
+
+            sidebarOpen.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+
+            document.body.classList.remove(
+                "sidebar-is-open"
+            );
         }
 
-        sidebarOpen.addEventListener("click", openSidebar);
-        sidebarClose.addEventListener("click", closeSidebar);
-        sidebarOverlay.addEventListener("click", closeSidebar);
+        sidebarOpen.addEventListener(
+            "click",
+            openSidebar
+        );
 
-        window.addEventListener("keydown", function (event) {
-            if (event.key === "Escape") {
-                closeSidebar();
+        sidebarClose.addEventListener(
+            "click",
+            closeSidebar
+        );
+
+        sidebarOverlay.addEventListener(
+            "click",
+            closeSidebar
+        );
+
+        window.addEventListener(
+            "keydown",
+            function (event) {
+                if (event.key === "Escape") {
+                    closeSidebar();
+                }
             }
-        });
+        );
     </script>
 </body>
 </html>

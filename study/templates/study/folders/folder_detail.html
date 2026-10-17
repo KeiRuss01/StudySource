@@ -146,35 +146,155 @@
                     <h2>References</h2>
 
                     <p>
-                        Papers and books saved to this folder
-                        will appear here.
+                        Papers saved to this research folder.
                     </p>
                 </div>
 
-                <button
+                <a
                     class="button button-primary"
-                    type="button"
-                    disabled
+                    href="{% url 'paper_search' %}"
                 >
                     + Find a reference
-                </button>
+                </a>
             </div>
 
-            <div class="folder-content-empty">
-                <div
-                    class="empty-icon"
-                    aria-hidden="true"
-                >
-                    R
+            {% if folder_references %}
+                <div class="folder-reference-list">
+                    {% for folder_reference in folder_references %}
+                        {% with reference=folder_reference.saved_reference %}
+                            <article class="folder-reference-card">
+                                <div class="folder-reference-content">
+                                    <div class="paper-result-badges">
+                                        <span class="result-provider-badge">
+                                            {{ reference.get_provider_display }}
+                                        </span>
+
+                                        <span class="result-neutral-badge">
+                                            {{ reference.get_reference_type_display }}
+                                        </span>
+
+                                        {% if reference.access_url %}
+                                            <span class="result-open-badge">
+                                                Access available
+                                            </span>
+                                        {% endif %}
+                                    </div>
+
+                                    <h3>{{ reference.title }}</h3>
+
+                                    <dl class="saved-reference-metadata">
+                                        <div>
+                                            <dt>Authors</dt>
+
+                                            <dd>
+                                                {{ reference.authors_display }}
+                                            </dd>
+                                        </div>
+
+                                        <div>
+                                            <dt>Year</dt>
+
+                                            <dd>
+                                                {% if reference.publication_year %}
+                                                    {{ reference.publication_year }}
+                                                {% else %}
+                                                    Not available
+                                                {% endif %}
+                                            </dd>
+                                        </div>
+
+                                        <div>
+                                            <dt>Source</dt>
+
+                                            <dd>
+                                                {% if reference.source_name %}
+                                                    {{ reference.source_name }}
+                                                {% else %}
+                                                    Not available
+                                                {% endif %}
+                                            </dd>
+                                        </div>
+
+                                        <div>
+                                            <dt>DOI</dt>
+
+                                            <dd>
+                                                {% if reference.doi %}
+                                                    {{ reference.doi }}
+                                                {% else %}
+                                                    Not available
+                                                {% endif %}
+                                            </dd>
+                                        </div>
+                                    </dl>
+
+                                    {% if reference.description %}
+                                        <div class="saved-reference-description">
+                                            <h4>Abstract</h4>
+
+                                            <p>
+                                                {{ reference.description|truncatewords:60 }}
+                                            </p>
+                                        </div>
+                                    {% endif %}
+
+                                    <p class="saved-reference-date">
+                                        Added to this folder
+                                        {{ folder_reference.date_added|date:"F j, Y" }}
+                                    </p>
+                                </div>
+
+                                <div class="folder-reference-actions">
+                                    {% if reference.source_url %}
+                                        <a
+                                            class="button button-ghost"
+                                            href="{{ reference.source_url }}"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            View source
+                                        </a>
+                                    {% endif %}
+
+                                    {% if reference.access_url %}
+                                        <a
+                                            class="button button-open-access"
+                                            href="{{ reference.access_url }}"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            Open-access copy
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </article>
+                        {% endwith %}
+                    {% endfor %}
                 </div>
+            {% else %}
+                <div class="folder-content-empty">
+                    <div
+                        class="empty-icon"
+                        aria-hidden="true"
+                    >
+                        R
+                    </div>
 
-                <h3>No references saved yet</h3>
+                    <h3>No references saved yet</h3>
 
-                <p>
-                    OpenAlex paper search will be added after
-                    the folder module is complete.
-                </p>
-            </div>
+                    <p>
+                        Search OpenAlex and save a paper to this
+                        research folder.
+                    </p>
+
+                    <a
+                        class="button button-primary"
+                        href="{% url 'paper_search' %}"
+                    >
+                        Find a reference
+                    </a>
+                </div>
+            {% endif %}
         </section>
 
         <section

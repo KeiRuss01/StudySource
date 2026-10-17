@@ -78,8 +78,11 @@
 
                     <div class="folder-card-meta">
                         <span>
-                            <strong>0</strong>
-                            references
+                            <strong>
+                                {{ folder.reference_count }}
+                            </strong>
+
+                            reference{{ folder.reference_count|pluralize }}
                         </span>
 
                         <span>

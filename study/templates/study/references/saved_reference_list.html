@@ -1,0 +1,288 @@
+{% extends "study/student_base.html" %}
+
+{% block title %}
+    Saved References — StudySource
+{% endblock %}
+
+{% block topbar_title %}
+    Saved References
+{% endblock %}
+
+{% block content %}
+<section class="saved-references-page">
+    <div class="page-heading-row">
+        <div>
+            <span class="eyebrow">
+                Research Library
+            </span>
+
+            <h1>Your saved references.</h1>
+
+            <p>
+                Review papers you have saved and open the research
+                folders connected to each reference.
+            </p>
+        </div>
+
+        <a
+            class="button button-primary"
+            href="{% url 'paper_search' %}"
+        >
+            + Find references
+        </a>
+    </div>
+
+    <section class="saved-reference-toolbar">
+        <form
+            method="get"
+            action="{% url 'saved_reference_list' %}"
+            class="saved-reference-search"
+            role="search"
+        >
+            <div class="saved-reference-search-field">
+                <label
+                    class="visually-hidden"
+                    for="saved-reference-query"
+                >
+                    Search saved references
+                </label>
+
+                <span
+                    class="search-field-icon"
+                    aria-hidden="true"
+                >
+                    S
+                </span>
+
+                <input
+                    id="saved-reference-query"
+                    type="search"
+                    name="q"
+                    value="{{ search_query }}"
+                    maxlength="200"
+                    placeholder="Search by title, DOI, or publication source"
+                    autocomplete="off"
+                >
+            </div>
+
+            <button
+                class="button button-primary"
+                type="submit"
+            >
+                Search
+            </button>
+
+            {% if search_query %}
+                <a
+                    class="button button-ghost"
+                    href="{% url 'saved_reference_list' %}"
+                >
+                    Clear
+                </a>
+            {% endif %}
+        </form>
+    </section>
+
+    <div class="saved-reference-summary">
+        <div>
+            <span class="eyebrow">
+                {% if search_query %}
+                    Search Results
+                {% else %}
+                    All References
+                {% endif %}
+            </span>
+
+            <h2>
+                {% if search_query %}
+                    Results for “{{ search_query }}”
+                {% else %}
+                    Saved papers
+                {% endif %}
+            </h2>
+        </div>
+
+        <p>
+            {{ references|length }}
+            reference{{ references|length|pluralize }}
+        </p>
+    </div>
+
+    {% if references %}
+        <div class="saved-reference-list">
+            {% for reference in references %}
+                <article class="saved-reference-card">
+                    <div class="saved-reference-content">
+                        <div class="paper-result-badges">
+                            <span class="result-provider-badge">
+                                {{ reference.get_provider_display }}
+                            </span>
+
+                            <span class="result-neutral-badge">
+                                {{ reference.get_reference_type_display }}
+                            </span>
+
+                            {% if reference.access_url %}
+                                <span class="result-open-badge">
+                                    Access available
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <h3>{{ reference.title }}</h3>
+
+                        <dl class="saved-reference-metadata">
+                            <div>
+                                <dt>Authors</dt>
+
+                                <dd>
+                                    {{ reference.authors_display }}
+                                </dd>
+                            </div>
+
+                            <div>
+                                <dt>Year</dt>
+
+                                <dd>
+                                    {% if reference.publication_year %}
+                                        {{ reference.publication_year }}
+                                    {% else %}
+                                        Not available
+                                    {% endif %}
+                                </dd>
+                            </div>
+
+                            <div>
+                                <dt>Source</dt>
+
+                                <dd>
+                                    {% if reference.source_name %}
+                                        {{ reference.source_name }}
+                                    {% else %}
+                                        Not available
+                                    {% endif %}
+                                </dd>
+                            </div>
+
+                            <div>
+                                <dt>DOI</dt>
+
+                                <dd>
+                                    {% if reference.doi %}
+                                        {{ reference.doi }}
+                                    {% else %}
+                                        Not available
+                                    {% endif %}
+                                </dd>
+                            </div>
+                        </dl>
+
+                        {% if reference.description %}
+                            <div class="saved-reference-description">
+                                <h4>Abstract</h4>
+
+                                <p>
+                                    {{ reference.description|truncatewords:70 }}
+                                </p>
+                            </div>
+                        {% endif %}
+
+                        <div class="saved-reference-folders">
+                            <span>Research folders</span>
+
+                            <div class="folder-tag-list">
+                                {% for folder in reference.folders.all %}
+                                    <a
+                                        class="folder-tag"
+                                        href="{% url 'folder_detail' folder.id %}"
+                                    >
+                                        {{ folder.name }}
+                                    </a>
+                                {% empty %}
+                                    <span class="muted-text">
+                                        Not assigned to a folder
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <p class="saved-reference-date">
+                            Saved {{ reference.created_at|date:"F j, Y" }}
+                        </p>
+                    </div>
+
+                    <div class="saved-reference-actions">
+                        {% if reference.source_url %}
+                            <a
+                                class="button button-ghost"
+                                href="{{ reference.source_url }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                View source
+                            </a>
+                        {% endif %}
+
+                        {% if reference.access_url %}
+                            <a
+                                class="button button-open-access"
+                                href="{{ reference.access_url }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Open-access copy
+                            </a>
+                        {% endif %}
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% elif search_query %}
+        <section class="search-empty-panel">
+            <div
+                class="empty-icon"
+                aria-hidden="true"
+            >
+                R
+            </div>
+
+            <h2>No matching references</h2>
+
+            <p>
+                No saved references matched “{{ search_query }}”.
+                Try another title, DOI, or publication source.
+            </p>
+
+            <a
+                class="button button-ghost"
+                href="{% url 'saved_reference_list' %}"
+            >
+                Show all references
+            </a>
+        </section>
+    {% else %}
+        <section class="search-empty-panel">
+            <div
+                class="empty-icon"
+                aria-hidden="true"
+            >
+                R
+            </div>
+
+            <h2>No saved references yet</h2>
+
+            <p>
+                Search OpenAlex and save useful papers to build
+                your research library.
+            </p>
+
+            <a
+                class="button button-primary"
+                href="{% url 'paper_search' %}"
+            >
+                Find your first reference
+            </a>
+        </section>
+    {% endif %}
+</section>
+{% endblock %}
