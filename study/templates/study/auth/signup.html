@@ -1,0 +1,46 @@
+{% extends "study/base.html" %}
+
+{% block title %}Create account — StudySource{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="auth-layout container">
+        <div class="auth-intro">
+            <span class="eyebrow">Start organizing</span>
+            <h1>Build a research workspace that stays useful.</h1>
+            <p>Your account keeps your folders, saved references, notes, images, and deadlines together.</p>
+            <ul class="auth-benefits">
+                <li><span>✓</span> Save papers and books in research folders</li>
+                <li><span>✓</span> Write notes connected to specific sources</li>
+                <li><span>✓</span> Track deadlines in Asia/Manila time</li>
+            </ul>
+        </div>
+        <div class="auth-card">
+            <div class="auth-card-heading">
+                <h2>Create your account</h2>
+                <p>All new public accounts are registered as students.</p>
+            </div>
+
+            {% if form.non_field_errors %}
+                <div class="form-alert" role="alert">
+                    {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+                </div>
+            {% endif %}
+
+            <form method="post" class="auth-form" novalidate>
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}<div class="field-help">{{ field.help_text|safe }}</div>{% endif %}
+                        {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+                    </div>
+                {% endfor %}
+                <button class="button button-primary button-full" type="submit">Create student account</button>
+            </form>
+            <p class="auth-switch">Already have an account? <a href="{% url 'login' %}">Log in</a></p>
+        </div>
+    </div>
+</section>
+{% endblock %}

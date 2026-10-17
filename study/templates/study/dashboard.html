@@ -1,0 +1,43 @@
+{% extends "study/base.html" %}
+
+{% block title %}Dashboard — StudySource{% endblock %}
+
+{% block content %}
+<section class="dashboard-page">
+    <div class="container">
+        <div class="dashboard-heading">
+            <div>
+                <span class="eyebrow">Student dashboard</span>
+                <h1>Welcome, {{ user.full_name }}.</h1>
+                <p>Your research workspace is ready. Start by creating your first folder.</p>
+            </div>
+            <button class="button button-primary" type="button" disabled>+ New research folder</button>
+        </div>
+
+        <div class="stat-grid">
+            <article class="stat-card"><span>Research folders</span><strong>{{ folder_count }}</strong><small>Organized projects</small></article>
+            <article class="stat-card"><span>Saved references</span><strong>{{ reference_count }}</strong><small>Papers and books</small></article>
+            <article class="stat-card"><span>Research notes</span><strong>{{ note_count }}</strong><small>Your own writing</small></article>
+            <article class="stat-card"><span>Upcoming deadlines</span><strong>{{ upcoming_deadline_count }}</strong><small>Tasks still due</small></article>
+        </div>
+
+        <div class="dashboard-grid">
+            <section class="panel empty-panel">
+                <div class="empty-icon">F</div>
+                <h2>No research folders yet</h2>
+                <p>Folder creation is the next module we will build. Your folders will appear here.</p>
+                <button class="button button-primary" type="button" disabled>Create first folder</button>
+            </section>
+            <aside class="panel next-steps">
+                <span class="eyebrow">Coming next</span>
+                <h2>Your research workflow</h2>
+                <ol>
+                    <li><span>1</span>Create a research folder</li>
+                    <li><span>2</span>Find and save a reference</li>
+                    <li><span>3</span>Add notes and a deadline</li>
+                </ol>
+            </aside>
+        </div>
+    </div>
+</section>
+{% endblock %}
