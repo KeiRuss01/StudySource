@@ -1,0 +1,173 @@
+{% extends "study/student_base.html" %}
+
+{% block title %}
+    Research Notes — StudySource
+{% endblock %}
+
+{% block topbar_title %}
+    Research Notes
+{% endblock %}
+
+{% block content %}
+<section class="notes-page">
+    <div class="page-heading-row">
+        <div>
+            <span class="eyebrow">
+                Research Notes
+            </span>
+
+            <h1>Your research notes.</h1>
+
+            <p>
+                Write, organize, and review your own notes across
+                all of your research folders.
+            </p>
+        </div>
+
+        <a
+            class="button button-primary"
+            href="{% url 'folder_list' %}"
+        >
+            Choose a folder
+        </a>
+    </div>
+
+    <section class="notes-filter-panel">
+        <form
+            method="get"
+            action="{% url 'note_list' %}"
+            class="notes-filter-form"
+        >
+            <label for="note-folder-filter">
+                Filter by folder
+            </label>
+
+            <select
+                id="note-folder-filter"
+                name="folder"
+            >
+                <option value="">
+                    All folders
+                </option>
+
+                {% for folder in folders %}
+                    <option
+                        value="{{ folder.id }}"
+                        {% if selected_folder == folder.id|stringformat:"s" %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ folder.name }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <button
+                class="button button-primary"
+                type="submit"
+            >
+                Apply filter
+            </button>
+
+            {% if selected_folder %}
+                <a
+                    class="button button-ghost"
+                    href="{% url 'note_list' %}"
+                >
+                    Clear
+                </a>
+            {% endif %}
+        </form>
+    </section>
+
+    {% if notes %}
+        <div class="notes-list">
+            {% for note in notes %}
+                <article class="note-card">
+                    <div class="note-card-content">
+                        <div class="note-card-labels">
+                            <span class="result-provider-badge">
+                                Note
+                            </span>
+
+                            <a
+                                class="folder-tag"
+                                href="{% url 'folder_detail' note.folder.id %}"
+                            >
+                                {{ note.folder.name }}
+                            </a>
+                        </div>
+
+                        <h2>
+                            <a
+                                href="{% url 'note_detail' note.id %}"
+                            >
+                                {{ note.title }}
+                            </a>
+                        </h2>
+
+                        <p>
+                            {{ note.content|truncatewords:45 }}
+                        </p>
+
+                        {% if note.saved_reference %}
+                            <div class="note-linked-reference">
+                                <span>Linked reference</span>
+
+                                <strong>
+                                    {{ note.saved_reference.title }}
+                                </strong>
+                            </div>
+                        {% endif %}
+
+                        <small class="note-card-date">
+                            Updated
+                            {{ note.updated_at|date:"F j, Y" }}
+                            at
+                            {{ note.updated_at|time:"g:i A" }}
+                        </small>
+                    </div>
+
+                    <div class="note-card-actions">
+                        <a
+                            class="button button-ghost"
+                            href="{% url 'note_detail' note.id %}"
+                        >
+                            Open note
+                        </a>
+
+                        <a
+                            class="button button-ghost"
+                            href="{% url 'note_update' note.id %}"
+                        >
+                            Edit
+                        </a>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <section class="search-empty-panel">
+            <div
+                class="empty-icon"
+                aria-hidden="true"
+            >
+                N
+            </div>
+
+            <h2>No research notes yet</h2>
+
+            <p>
+                Open a research folder and create your first note.
+            </p>
+
+            <a
+                class="button button-primary"
+                href="{% url 'folder_list' %}"
+            >
+                Open research folders
+            </a>
+        </section>
+    {% endif %}
+</section>
+{% endblock %}

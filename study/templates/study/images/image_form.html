@@ -1,0 +1,33 @@
+{% extends "study/student_base.html" %}
+
+{% block title %}Upload image — StudySource{% endblock %}
+{% block topbar_title %}Upload image{% endblock %}
+
+{% block content %}
+<section class="note-form-page image-form-page">
+    <div class="form-page-grid">
+        <div class="form-page-introduction">
+            <span class="eyebrow">{{ folder.name }}</span>
+            <h1>Upload research image.</h1>
+            <p>Store handwritten notes, diagrams, and other visual material with this research folder.</p>
+        </div>
+        <div class="folder-form-card">
+            <form method="post" enctype="multipart/form-data" class="folder-form">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="form-group{% if field.errors %} has-errors{% endif %}">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
+                        {% for error in field.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                    </div>
+                {% endfor %}
+                <div class="form-actions">
+                    <a class="button button-ghost" href="{% url 'folder_detail' folder.id %}">Cancel</a>
+                    <button class="button button-primary" type="submit">Upload image</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

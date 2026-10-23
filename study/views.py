@@ -29,6 +29,8 @@ from .forms import (
 from .models import (
     FolderReference,
     ResearchFolder,
+    ResearchDeadline,
+    ResearchNote,
     SavedReference,
     User,
 )
@@ -166,8 +168,10 @@ def student_dashboard(request):
             .saved_references
             .count()
         ),
-        "note_count": 0,
-        "upcoming_deadline_count": 0,
+        "note_count": request.user.research_notes.count(),
+        "upcoming_deadline_count": request.user.research_deadlines.filter(
+            completed=False
+        ).count(),
         "recent_folders": recent_folders,
     }
 
@@ -610,8 +614,8 @@ def folder_detail(request, folder_id):
             folder_references.count()
         ),
         "note_count": 0,
-        "image_count": 0,
-        "deadline_count": 0,
+        "image_count": folder.images.count(),
+        "deadline_count": folder.deadlines.count(),
     }
 
     return render(

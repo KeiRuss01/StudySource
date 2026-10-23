@@ -1,0 +1,117 @@
+{% extends "study/student_base.html" %}
+
+{% block title %}
+    {{ page_title }} — StudySource
+{% endblock %}
+
+{% block topbar_title %}
+    Research Notes
+{% endblock %}
+
+{% block content %}
+<section class="note-form-page">
+    <div class="form-page-grid">
+        <div class="form-page-introduction">
+            <span class="eyebrow">
+                {{ folder.name }}
+            </span>
+
+            <h1>{{ page_title }}.</h1>
+
+            <p>
+                Write your own notes about this research topic.
+                You may optionally connect the note to one of
+                your saved references.
+            </p>
+
+            <div class="form-information-card">
+                <h2>Note reminders</h2>
+
+                <ul>
+                    <li>Use a clear and useful note title.</li>
+                    <li>Write the idea in your own words.</li>
+                    <li>Link a reference when the note discusses a source.</li>
+                </ul>
+            </div>
+        </div>
+
+        <section class="folder-form-card">
+            <form
+                method="post"
+                class="folder-form"
+            >
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="form-alert">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <div class="form-group">
+                    <label for="{{ form.title.id_for_label }}">
+                        Note title
+                    </label>
+
+                    {{ form.title }}
+
+                    {% for error in form.title.errors %}
+                        <span class="field-error">
+                            {{ error }}
+                        </span>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.content.id_for_label }}">
+                        Note content
+                    </label>
+
+                    {{ form.content }}
+
+                    {% for error in form.content.errors %}
+                        <span class="field-error">
+                            {{ error }}
+                        </span>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.saved_reference.id_for_label }}">
+                        Linked reference
+                    </label>
+
+                    {{ form.saved_reference }}
+
+                    <span class="field-help">
+                        Optional. Select a saved paper or book related
+                        to this note.
+                    </span>
+
+                    {% for error in form.saved_reference.errors %}
+                        <span class="field-error">
+                            {{ error }}
+                        </span>
+                    {% endfor %}
+                </div>
+
+                <div class="form-actions">
+                    <a
+                        class="button button-ghost"
+                        href="{% url 'folder_detail' folder.id %}"
+                    >
+                        Cancel
+                    </a>
+
+                    <button
+                        class="button button-primary"
+                        type="submit"
+                    >
+                        {{ submit_label }}
+                    </button>
+                </div>
+            </form>
+        </section>
+    </div>
+</section>
+{% endblock %}

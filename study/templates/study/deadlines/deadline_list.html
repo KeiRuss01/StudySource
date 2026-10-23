@@ -1,0 +1,53 @@
+{% extends "study/student_base.html" %}
+
+{% block title %}Deadlines — StudySource{% endblock %}
+{% block topbar_title %}Deadlines{% endblock %}
+
+{% block content %}
+<section class="notes-page deadline-page">
+    <div class="page-heading">
+        <div>
+            <span class="eyebrow">Research planning</span>
+            <h1>Upcoming deadlines.</h1>
+            <p>Keep important research tasks connected to their folders.</p>
+        </div>
+        <div class="deadline-toolbar">
+            <a class="button button-ghost" href="{% url 'calendar_connect' %}">Connect Google Calendar</a>
+            <a class="button button-primary" href="{% url 'deadline_create' %}">+ Add deadline</a>
+        </div>
+    </div>
+
+    {% if deadlines %}
+        <div class="notes-list">
+            {% for deadline in deadlines %}
+                <article class="note-card deadline-card {% if deadline.completed %}deadline-completed{% endif %}">
+                    <div>
+                        <div class="note-card-labels">
+                            <span class="result-provider-badge">{{ deadline.folder.name }}</span>
+                            {% if deadline.completed %}<span class="result-neutral-badge">Completed</span>{% endif %}
+                        </div>
+                        <h2>{{ deadline.title }}</h2>
+                        {% if deadline.description %}<p>{{ deadline.description|truncatewords:30 }}</p>{% endif %}
+                        <small class="note-card-date">Due {{ deadline.due_date|date:"M j, Y" }}</small>
+                    </div>
+                    <div class="note-card-actions">
+                        <a class="button button-ghost" href="{% url 'deadline_update' deadline.id %}">Edit</a>
+                        <form method="post" action="{% url 'deadline_sync' deadline.id %}">
+                            {% csrf_token %}
+                            <button class="button button-ghost" type="submit">Sync</button>
+                        </form>
+                        <a class="button button-danger-outline" href="{% url 'deadline_delete' deadline.id %}">Delete</a>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="folder-content-empty">
+            <div class="empty-icon" aria-hidden="true">D</div>
+            <h3>No deadlines yet</h3>
+            <p>Add a deadline to keep your research schedule on track.</p>
+            <a class="button button-primary" href="{% url 'deadline_create' %}">Create your first deadline</a>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

@@ -6,8 +6,6 @@ from django.db.models.functions import Lower
 
 
 class UserManager(BaseUserManager):
-    """Create users who log in using an email address."""
-
     use_in_migrations = True
 
     def create_user(
@@ -43,21 +41,9 @@ class UserManager(BaseUserManager):
             "role",
             User.Role.ADMIN,
         )
-
-        extra_fields.setdefault(
-            "is_staff",
-            True,
-        )
-
-        extra_fields.setdefault(
-            "is_superuser",
-            True,
-        )
-
-        extra_fields.setdefault(
-            "is_active",
-            True,
-        )
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+        extra_fields.setdefault("is_active", True)
 
         if extra_fields.get("is_staff") is not True:
             raise ValueError(
@@ -305,3 +291,109 @@ class FolderReference(models.Model):
             f"{self.folder.name}: "
             f"{self.saved_reference.title}"
         )
+
+
+class ResearchNote(models.Model):
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="research_notes",
+    )
+
+    folder = models.ForeignKey(
+        ResearchFolder,
+        on_delete=models.CASCADE,
+        related_name="notes",
+    )
+
+    saved_reference = models.ForeignKey(
+        SavedReference,
+        on_delete=models.SET_NULL,
+        related_name="notes",
+        null=True,
+        blank=True,
+    )
+
+    title = models.CharField(
+        max_length=200,
+    )
+
+    content = models.TextField()
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
+
+    class Meta:
+        ordering = ["-updated_at"]
+
+    def __str__(self):
+        return self.title
+
+
+class ResearchDeadline(models.Model):
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="research_deadlines",
+    )
+
+    folder = models.ForeignKey(
+        ResearchFolder,
+        on_delete=models.CASCADE,
+        related_name="deadlines",
+    )
+
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    due_date = models.DateField()
+    completed = models.BooleanField(default=False)
+    google_event_id = models.CharField(max_length=255, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["completed", "due_date", "-created_at"]
+
+    def __str__(self):
+        return self.title
+
+
+class CalendarConnection(models.Model):
+    owner = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="calendar_connection",
+    )
+    access_token = models.TextField()
+    refresh_token = models.TextField(blank=True)
+    token_expires_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+class ResearchImage(models.Model):
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="research_images",
+    )
+    folder = models.ForeignKey(
+        ResearchFolder,
+        on_delete=models.CASCADE,
+        related_name="images",
+    )
+    title = models.CharField(max_length=150, blank=True)
+    image_url = models.URLField(max_length=1000)
+    public_id = models.CharField(max_length=255, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return self.title or f"Image {self.pk}"

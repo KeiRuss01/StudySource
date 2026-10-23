@@ -25,7 +25,7 @@
 
     <link
         rel="preconnect"
-        href="https://fonts.gstatic.com"
+        href="https://fonts.googleapis.com"
         crossorigin
     >
 
@@ -36,12 +36,12 @@
 
     <link
         rel="stylesheet"
-        href="{% static 'study/css/styles.css' %}?v=5"
+        href="{% static 'study/css/styles.css' %}?v=6"
     >
 
     <link
         rel="stylesheet"
-        href="{% static 'study/css/references.css' %}?v=1"
+        href="{% static 'study/css/references.css' %}?v=2"
     >
 </head>
 
@@ -133,7 +133,9 @@
                     class="sidebar-link
                     {% if request.resolver_match.url_name == 'paper_search' %}
                         active
-                    {% elif request.resolver_match.url_name == 'save_openalex_reference' %}
+                    {% elif request.resolver_match.url_name == 'book_search' %}
+                        active
+                    {% elif request.resolver_match.url_name == 'doi_lookup' %}
                         active
                     {% endif %}"
                     href="{% url 'paper_search' %}"
@@ -165,9 +167,20 @@
                     <span>Saved References</span>
                 </a>
 
-                <span
-                    class="sidebar-link sidebar-link-disabled"
-                    title="The Notes module will be added later."
+                <a
+                    class="sidebar-link
+                    {% if request.resolver_match.url_name == 'note_list' %}
+                        active
+                    {% elif request.resolver_match.url_name == 'note_create' %}
+                        active
+                    {% elif request.resolver_match.url_name == 'note_detail' %}
+                        active
+                    {% elif request.resolver_match.url_name == 'note_update' %}
+                        active
+                    {% elif request.resolver_match.url_name == 'note_delete' %}
+                        active
+                    {% endif %}"
+                    href="{% url 'note_list' %}"
                 >
                     <span
                         class="sidebar-icon"
@@ -177,13 +190,22 @@
                     </span>
 
                     <span>Notes</span>
+                </a>
 
-                    <small>Soon</small>
-                </span>
-
-                <span
-                    class="sidebar-link sidebar-link-disabled"
-                    title="The Deadlines module will be added later."
+                <a
+                    class="sidebar-link
+                    {% if request.resolver_match.url_name == 'deadline_list' %}
+                        active
+                    {% elif request.resolver_match.url_name == 'deadline_create' %}
+                        active
+                    {% elif request.resolver_match.url_name == 'folder_deadline_create' %}
+                        active
+                    {% elif request.resolver_match.url_name == 'deadline_update' %}
+                        active
+                    {% elif request.resolver_match.url_name == 'deadline_delete' %}
+                        active
+                    {% endif %}"
+                    href="{% url 'deadline_list' %}"
                 >
                     <span
                         class="sidebar-icon"
@@ -194,8 +216,7 @@
 
                     <span>Deadlines</span>
 
-                    <small>Soon</small>
-                </span>
+                </a>
             </nav>
 
             <div class="sidebar-account">

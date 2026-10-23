@@ -75,25 +75,21 @@
     <div class="folder-summary-grid">
         <article class="folder-summary-card">
             <span>References</span>
-
             <strong>{{ reference_count }}</strong>
         </article>
 
         <article class="folder-summary-card">
             <span>Notes</span>
-
-            <strong>{{ note_count }}</strong>
+            <strong>{{ folder.notes.count }}</strong>
         </article>
 
         <article class="folder-summary-card">
             <span>Images</span>
-
             <strong>{{ image_count }}</strong>
         </article>
 
         <article class="folder-summary-card">
             <span>Deadlines</span>
-
             <strong>{{ deadline_count }}</strong>
         </article>
     </div>
@@ -114,7 +110,7 @@
             data-folder-tab="notes"
         >
             Notes
-            <span>{{ note_count }}</span>
+            <span>{{ folder.notes.count }}</span>
         </button>
 
         <button
@@ -172,12 +168,6 @@
                                         <span class="result-neutral-badge">
                                             {{ reference.get_reference_type_display }}
                                         </span>
-
-                                        {% if reference.access_url %}
-                                            <span class="result-open-badge">
-                                                Access available
-                                            </span>
-                                        {% endif %}
                                     </div>
 
                                     <h3>{{ reference.title }}</h3>
@@ -227,21 +217,6 @@
                                             </dd>
                                         </div>
                                     </dl>
-
-                                    {% if reference.description %}
-                                        <div class="saved-reference-description">
-                                            <h4>Abstract</h4>
-
-                                            <p>
-                                                {{ reference.description|truncatewords:60 }}
-                                            </p>
-                                        </div>
-                                    {% endif %}
-
-                                    <p class="saved-reference-date">
-                                        Added to this folder
-                                        {{ folder_reference.date_added|date:"F j, Y" }}
-                                    </p>
                                 </div>
 
                                 <div class="folder-reference-actions">
@@ -256,16 +231,12 @@
                                         </a>
                                     {% endif %}
 
-                                    {% if reference.access_url %}
-                                        <a
-                                            class="button button-open-access"
-                                            href="{{ reference.access_url }}"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                        >
-                                            Open-access copy
-                                        </a>
-                                    {% endif %}
+                                    <a
+                                        class="button button-primary"
+                                        href="{% url 'note_create' folder.id %}"
+                                    >
+                                        Add note
+                                    </a>
                                 </div>
                             </article>
                         {% endwith %}
@@ -283,8 +254,7 @@
                     <h3>No references saved yet</h3>
 
                     <p>
-                        Search OpenAlex and save a paper to this
-                        research folder.
+                        Search OpenAlex and save a paper to this folder.
                     </p>
 
                     <a
@@ -306,35 +276,86 @@
                     <h2>Notes</h2>
 
                     <p>
-                        Your research notes for this folder
-                        will appear here.
+                        Your research notes for this folder.
                     </p>
                 </div>
 
-                <button
+                <a
                     class="button button-primary"
-                    type="button"
-                    disabled
+                    href="{% url 'note_create' folder.id %}"
                 >
                     + Create note
-                </button>
+                </a>
             </div>
 
-            <div class="folder-content-empty">
-                <div
-                    class="empty-icon"
-                    aria-hidden="true"
-                >
-                    N
+            {% if folder.notes.all %}
+                <div class="folder-note-list">
+                    {% for note in folder.notes.all %}
+                        <article class="folder-note-card">
+                            <div>
+                                <span class="result-provider-badge">
+                                    Note
+                                </span>
+
+                                <h3>
+                                    <a
+                                        href="{% url 'note_detail' note.id %}"
+                                    >
+                                        {{ note.title }}
+                                    </a>
+                                </h3>
+
+                                <p>
+                                    {{ note.content|truncatewords:35 }}
+                                </p>
+
+                                <small>
+                                    Updated
+                                    {{ note.updated_at|date:"M j, Y" }}
+                                </small>
+                            </div>
+
+                            <div class="folder-note-actions">
+                                <a
+                                    class="button button-ghost"
+                                    href="{% url 'note_detail' note.id %}"
+                                >
+                                    Open
+                                </a>
+
+                                <a
+                                    class="button button-ghost"
+                                    href="{% url 'note_update' note.id %}"
+                                >
+                                    Edit
+                                </a>
+                            </div>
+                        </article>
+                    {% endfor %}
                 </div>
+            {% else %}
+                <div class="folder-content-empty">
+                    <div
+                        class="empty-icon"
+                        aria-hidden="true"
+                    >
+                        N
+                    </div>
 
-                <h3>No notes created yet</h3>
+                    <h3>No notes created yet</h3>
 
-                <p>
-                    Note creation will be available in a
-                    later module.
-                </p>
-            </div>
+                    <p>
+                        Write your first note for this research folder.
+                    </p>
+
+                    <a
+                        class="button button-primary"
+                        href="{% url 'note_create' folder.id %}"
+                    >
+                        Create your first note
+                    </a>
+                </div>
+            {% endif %}
         </section>
 
         <section
@@ -350,30 +371,39 @@
                     </p>
                 </div>
 
-                <button
+                <a
                     class="button button-primary"
-                    type="button"
-                    disabled
+                    href="{% url 'image_upload' folder.id %}"
                 >
                     + Upload image
-                </button>
+                </a>
             </div>
 
-            <div class="folder-content-empty">
-                <div
-                    class="empty-icon"
-                    aria-hidden="true"
-                >
-                    I
+            {% if folder.images.all %}
+                <div class="image-gallery">
+                    {% for image in folder.images.all %}
+                        <article class="image-gallery-card">
+                            <a href="{{ image.image_url }}" target="_blank" rel="noopener noreferrer">
+                                <img src="{{ image.image_url }}" alt="{{ image.title|default:'Research image' }}">
+                            </a>
+                            <div class="image-gallery-footer">
+                                <strong>{{ image.title|default:'Research image' }}</strong>
+                                <form method="post" action="{% url 'image_delete' image.id %}">
+                                    {% csrf_token %}
+                                    <button class="button button-danger-outline" type="submit">Delete</button>
+                                </form>
+                            </div>
+                        </article>
+                    {% endfor %}
                 </div>
-
-                <h3>No images uploaded yet</h3>
-
-                <p>
-                    Cloudinary image uploads will be added
-                    after note CRUD.
-                </p>
-            </div>
+            {% else %}
+                <div class="folder-content-empty">
+                    <div class="empty-icon" aria-hidden="true">I</div>
+                    <h3>No images uploaded yet</h3>
+                    <p>Upload handwritten notes, diagrams, or other research images.</p>
+                    <a class="button button-primary" href="{% url 'image_upload' folder.id %}">Upload your first image</a>
+                </div>
+            {% endif %}
         </section>
 
         <section
@@ -385,35 +415,43 @@
                     <h2>Deadlines</h2>
 
                     <p>
-                        Research deadlines for this folder
-                        will appear here.
+                        Research deadlines for this folder will appear here.
                     </p>
                 </div>
 
-                <button
+                <a
                     class="button button-primary"
-                    type="button"
-                    disabled
+                    href="{% url 'folder_deadline_create' folder.id %}"
                 >
                     + Add deadline
-                </button>
+                </a>
             </div>
 
-            <div class="folder-content-empty">
-                <div
-                    class="empty-icon"
-                    aria-hidden="true"
-                >
-                    D
+            {% if folder.deadlines.all %}
+                <div class="folder-note-list">
+                    {% for deadline in folder.deadlines.all %}
+                        <article class="folder-note-card {% if deadline.completed %}deadline-completed{% endif %}">
+                            <div>
+                                <span class="result-provider-badge">{% if deadline.completed %}Completed{% else %}Deadline{% endif %}</span>
+                                <h3>{{ deadline.title }}</h3>
+                                {% if deadline.description %}<p>{{ deadline.description|truncatewords:30 }}</p>{% endif %}
+                                <small>Due {{ deadline.due_date|date:"M j, Y" }}</small>
+                            </div>
+                            <div class="folder-note-actions">
+                                <a class="button button-ghost" href="{% url 'deadline_update' deadline.id %}">Edit</a>
+                                <a class="button button-danger-outline" href="{% url 'deadline_delete' deadline.id %}">Delete</a>
+                            </div>
+                        </article>
+                    {% endfor %}
                 </div>
-
-                <h3>No deadlines created yet</h3>
-
-                <p>
-                    Local deadlines and Google Calendar
-                    synchronization will be added later.
-                </p>
-            </div>
+            {% else %}
+                <div class="folder-content-empty">
+                    <div class="empty-icon" aria-hidden="true">D</div>
+                    <h3>No deadlines created yet</h3>
+                    <p>Add the first deadline for this research folder.</p>
+                    <a class="button button-primary" href="{% url 'folder_deadline_create' folder.id %}">Create deadline</a>
+                </div>
+            {% endif %}
         </section>
     </div>
 </section>

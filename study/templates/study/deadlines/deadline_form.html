@@ -1,0 +1,41 @@
+{% extends "study/student_base.html" %}
+
+{% block title %}{{ page_title }} — StudySource{% endblock %}
+{% block topbar_title %}Deadlines{% endblock %}
+
+{% block content %}
+<section class="note-form-page deadline-form-page">
+    <div class="form-page-grid">
+        <div class="form-page-introduction">
+            <span class="eyebrow">Research planning</span>
+            <h1>{{ page_title }}.</h1>
+            <p>Set a clear due date and keep the task connected to the right research folder.</p>
+            <div class="form-information-card">
+                <h2>Deadline reminders</h2>
+                <ul>
+                    <li>Use a specific, actionable title.</li>
+                    <li>Choose the folder this task belongs to.</li>
+                    <li>Mark it complete when the work is finished.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="folder-form-card">
+            <form method="post" class="folder-form">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="form-group{% if field.errors %} has-errors{% endif %}">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {% for error in field.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                    </div>
+                {% endfor %}
+                <div class="form-actions">
+                    <a class="button button-ghost" href="{% url 'deadline_list' %}">Cancel</a>
+                    <button class="button button-primary" type="submit">{{ submit_label }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "study/student_base.html" %}
+
+{% block title %}Delete deadline — StudySource{% endblock %}
+{% block topbar_title %}Delete deadline{% endblock %}
+
+{% block content %}
+<section class="folder-content-empty delete-page">
+    <span class="eyebrow">Confirm deletion</span>
+    <h1>Delete “{{ deadline.title }}”?</h1>
+    <p>This deadline will be permanently removed from your research workspace.</p>
+    <form method="post" class="form-actions">
+        {% csrf_token %}
+        <a class="button button-ghost" href="{% url 'deadline_list' %}">Cancel</a>
+        <button class="button button-danger" type="submit">Delete deadline</button>
+    </form>
+</section>
+{% endblock %}

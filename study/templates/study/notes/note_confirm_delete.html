@@ -1,0 +1,64 @@
+{% extends "study/student_base.html" %}
+
+{% block title %}
+    Delete Note — StudySource
+{% endblock %}
+
+{% block topbar_title %}
+    Delete Research Note
+{% endblock %}
+
+{% block content %}
+<section class="delete-page">
+    <div class="delete-card">
+        <div
+            class="delete-warning-icon"
+            aria-hidden="true"
+        >
+            !
+        </div>
+
+        <span class="eyebrow delete-eyebrow">
+            Delete research note
+        </span>
+
+        <h1>Delete “{{ note.title }}”?</h1>
+
+        <p class="delete-introduction">
+            This will permanently remove this note from the
+            “{{ note.folder.name }}” folder.
+        </p>
+
+        <div class="delete-effects">
+            <h2>What will happen</h2>
+
+            <ul>
+                <li>The note content will be deleted.</li>
+                <li>Your saved references will not be deleted.</li>
+                <li>The research folder will remain available.</li>
+            </ul>
+        </div>
+
+        <form
+            method="post"
+            class="delete-form-actions"
+        >
+            {% csrf_token %}
+
+            <a
+                class="button button-ghost"
+                href="{% url 'note_detail' note.id %}"
+            >
+                Cancel
+            </a>
+
+            <button
+                class="button button-danger"
+                type="submit"
+            >
+                Delete note
+            </button>
+        </form>
+    </div>
+</section>
+{% endblock %}
