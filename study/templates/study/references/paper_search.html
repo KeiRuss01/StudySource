@@ -45,21 +45,21 @@
             <small>OpenAlex</small>
         </a>
 
-        <span
-            class="reference-provider-tab disabled"
-            title="Google Books search will be added later."
+        <a
+            class="reference-provider-tab"
+            href="{% url 'book_search' %}"
         >
             Books
             <small>Google Books</small>
-        </span>
+        </a>
 
-        <span
-            class="reference-provider-tab disabled"
-            title="Crossref DOI lookup will be added later."
+        <a
+            class="reference-provider-tab"
+            href="{% url 'doi_lookup' %}"
         >
             DOI Lookup
             <small>Crossref</small>
-        </span>
+        </a>
     </div>
 
     <section class="paper-search-panel">
@@ -303,13 +303,13 @@
 
                                     <div class="save-reference-field">
                                         <label
-                                            for="folder-{{ forloop.counter }}"
+                                            for="paper-folder-{{ forloop.counter }}"
                                         >
                                             Save to a research folder
                                         </label>
 
                                         <select
-                                            id="folder-{{ forloop.counter }}"
+                                            id="paper-folder-{{ forloop.counter }}"
                                             name="folder"
                                             class="save-reference-select"
                                         >
@@ -337,7 +337,6 @@
                                     class="button button-primary"
                                     type="button"
                                     disabled
-                                    title="This result does not have a valid OpenAlex ID."
                                 >
                                     Cannot save
                                 </button>

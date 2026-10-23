@@ -1,0 +1,332 @@
+{% extends "study/student_base.html" %}
+
+{% block title %}
+    DOI Lookup — StudySource
+{% endblock %}
+
+{% block topbar_title %}
+    Find References
+{% endblock %}
+
+{% block content %}
+<section class="reference-search-page">
+    <div class="page-heading-row">
+        <div>
+            <span class="eyebrow">
+                Find References
+            </span>
+
+            <h1>Look up a DOI.</h1>
+
+            <p>
+                Enter a DOI to retrieve bibliographic metadata
+                from Crossref.
+            </p>
+        </div>
+
+        <a
+            class="button button-ghost"
+            href="{% url 'saved_reference_list' %}"
+        >
+            View saved references
+        </a>
+    </div>
+
+    <div
+        class="reference-provider-tabs"
+        aria-label="Reference search services"
+    >
+        <a
+            class="reference-provider-tab"
+            href="{% url 'paper_search' %}"
+        >
+            Papers
+            <small>OpenAlex</small>
+        </a>
+
+        <a
+            class="reference-provider-tab"
+            href="{% url 'book_search' %}"
+        >
+            Books
+            <small>Google Books</small>
+        </a>
+
+        <a
+            class="reference-provider-tab active"
+            href="{% url 'doi_lookup' %}"
+        >
+            DOI Lookup
+            <small>Crossref</small>
+        </a>
+    </div>
+
+    <section class="paper-search-panel">
+        <form
+            method="get"
+            action="{% url 'doi_lookup' %}"
+            class="paper-search-form"
+            role="search"
+        >
+            <div class="paper-search-input-wrapper">
+                <label
+                    class="visually-hidden"
+                    for="doi-input"
+                >
+                    DOI
+                </label>
+
+                <span
+                    class="search-field-icon"
+                    aria-hidden="true"
+                >
+                    D
+                </span>
+
+                <input
+                    id="doi-input"
+                    type="text"
+                    name="doi"
+                    value="{{ doi }}"
+                    maxlength="255"
+                    placeholder="Example: 10.1038/s41586-020-2649-2"
+                    autocomplete="off"
+                    required
+                >
+            </div>
+
+            <button
+                class="button button-primary paper-search-button"
+                type="submit"
+            >
+                Look up DOI
+            </button>
+        </form>
+
+        <p class="search-provider-note">
+            Crossref provides bibliographic metadata. The DOI
+            publisher page remains the original source.
+        </p>
+    </section>
+
+    {% if lookup_error %}
+        <div
+            class="search-error-panel"
+            role="alert"
+        >
+            <div
+                class="search-error-icon"
+                aria-hidden="true"
+            >
+                !
+            </div>
+
+            <div>
+                <h2>DOI lookup unavailable</h2>
+
+                <p>{{ lookup_error }}</p>
+            </div>
+        </div>
+    {% elif lookup_performed and result %}
+        <div class="search-results-heading">
+            <div>
+                <span class="eyebrow">
+                    Crossref result
+                </span>
+
+                <h2>{{ result.title }}</h2>
+            </div>
+        </div>
+
+        <article class="paper-result-card">
+            <div class="paper-result-main">
+                <div class="paper-result-badges">
+                    <span class="result-provider-badge">
+                        Crossref
+                    </span>
+
+                    <span class="result-neutral-badge">
+                        {{ result.reference_type|title }}
+                    </span>
+                </div>
+
+                <h3>{{ result.title }}</h3>
+
+                <dl class="paper-metadata">
+                    <div>
+                        <dt>Authors</dt>
+
+                        <dd>
+                            {% if result.authors %}
+                                {{ result.authors|join:", " }}
+                            {% else %}
+                                Not available
+                            {% endif %}
+                        </dd>
+                    </div>
+
+                    <div>
+                        <dt>Year</dt>
+
+                        <dd>
+                            {% if result.publication_year %}
+                                {{ result.publication_year }}
+                            {% else %}
+                                Not available
+                            {% endif %}
+                        </dd>
+                    </div>
+
+                    <div>
+                        <dt>Source</dt>
+
+                        <dd>
+                            {% if result.source_name %}
+                                {{ result.source_name }}
+                            {% else %}
+                                Not available
+                            {% endif %}
+                        </dd>
+                    </div>
+
+                    <div>
+                        <dt>DOI</dt>
+
+                        <dd>{{ result.doi }}</dd>
+                    </div>
+                </dl>
+
+                <div class="paper-description">
+                    <h4>Abstract</h4>
+
+                    {% if result.description %}
+                        <p>
+                            {{ result.description|truncatewords:80 }}
+                        </p>
+                    {% else %}
+                        <p class="muted-text">
+                            Abstract not available.
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="paper-result-actions">
+                {% if result.source_url %}
+                    <a
+                        class="button button-ghost"
+                        href="{{ result.source_url }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Open publisher page
+                    </a>
+                {% endif %}
+
+                <form
+                    method="post"
+                    action="{% url 'save_external_reference' %}"
+                    class="save-reference-form"
+                >
+                    {% csrf_token %}
+
+                    <input
+                        type="hidden"
+                        name="provider"
+                        value="crossref"
+                    >
+
+                    <input
+                        type="hidden"
+                        name="external_id"
+                        value="{{ result.external_id }}"
+                    >
+
+                    <input
+                        type="hidden"
+                        name="return_provider"
+                        value="doi"
+                    >
+
+                    <input
+                        type="hidden"
+                        name="return_doi"
+                        value="{{ doi }}"
+                    >
+
+                    <div class="save-reference-field">
+                        <label for="doi-folder">
+                            Save to a research folder
+                        </label>
+
+                        <select
+                            id="doi-folder"
+                            name="folder"
+                            class="save-reference-select"
+                        >
+                            <option value="">
+                                Save without a folder
+                            </option>
+
+                            {% for folder in folders %}
+                                <option value="{{ folder.id }}">
+                                    {{ folder.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <button
+                        class="button button-primary"
+                        type="submit"
+                    >
+                        Save reference
+                    </button>
+                </form>
+            </div>
+        </article>
+    {% elif lookup_performed %}
+        <section class="search-empty-panel">
+            <div
+                class="empty-icon"
+                aria-hidden="true"
+            >
+                D
+            </div>
+
+            <h2>No DOI record found</h2>
+
+            <p>
+                Check the DOI spelling and try again.
+            </p>
+        </section>
+    {% else %}
+        <section class="search-welcome-panel">
+            <div class="search-welcome-content">
+                <div
+                    class="search-welcome-icon"
+                    aria-hidden="true"
+                >
+                    D
+                </div>
+
+                <h2>Look up a reference by DOI.</h2>
+
+                <p>
+                    A DOI usually starts with
+                    <strong>10.</strong> and identifies one
+                    published work.
+                </p>
+            </div>
+
+            <div class="search-suggestions">
+                <span>Example DOI</span>
+
+                <a href="?doi=10.1038%2Fs41586-020-2649-2">
+                    10.1038/s41586-020-2649-2
+                </a>
+            </div>
+        </section>
+    {% endif %}
+</section>
+{% endblock %}

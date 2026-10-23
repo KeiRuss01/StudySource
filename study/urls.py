@@ -1,26 +1,23 @@
 from django.urls import path
 
+from . import reference_views
 from . import views
 
 
 urlpatterns = [
-    # Public pages
     path("", views.home, name="home"),
     path("about/", views.about, name="about"),
 
-    # Authentication
     path("signup/", views.signup_view, name="signup"),
     path("login/", views.login_view, name="login"),
     path("logout/", views.logout_view, name="logout"),
 
-    # Student dashboard
     path(
         "dashboard/",
         views.student_dashboard,
         name="student_dashboard",
     ),
 
-    # Research folders
     path(
         "folders/",
         views.folder_list,
@@ -47,7 +44,6 @@ urlpatterns = [
         name="folder_delete",
     ),
 
-    # Paper search and saved references
     path(
         "references/papers/",
         views.paper_search,
@@ -58,6 +54,23 @@ urlpatterns = [
         views.save_openalex_reference,
         name="save_openalex_reference",
     ),
+
+    path(
+        "references/books/",
+        reference_views.book_search,
+        name="book_search",
+    ),
+    path(
+        "references/doi/",
+        reference_views.doi_lookup,
+        name="doi_lookup",
+    ),
+    path(
+        "references/external/save/",
+        reference_views.save_external_reference,
+        name="save_external_reference",
+    ),
+
     path(
         "references/saved/",
         views.saved_reference_list,

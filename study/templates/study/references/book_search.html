@@ -1,0 +1,412 @@
+{% extends "study/student_base.html" %}
+
+{% block title %}
+    Find Books — StudySource
+{% endblock %}
+
+{% block topbar_title %}
+    Find References
+{% endblock %}
+
+{% block content %}
+<section class="reference-search-page">
+    <div class="page-heading-row">
+        <div>
+            <span class="eyebrow">
+                Find References
+            </span>
+
+            <h1>Search for books.</h1>
+
+            <p>
+                Search Google Books for book information,
+                descriptions, publishers, and preview links.
+            </p>
+        </div>
+
+        <a
+            class="button button-ghost"
+            href="{% url 'saved_reference_list' %}"
+        >
+            View saved references
+        </a>
+    </div>
+
+    <div
+        class="reference-provider-tabs"
+        aria-label="Reference search services"
+    >
+        <a
+            class="reference-provider-tab"
+            href="{% url 'paper_search' %}"
+        >
+            Papers
+            <small>OpenAlex</small>
+        </a>
+
+        <a
+            class="reference-provider-tab active"
+            href="{% url 'book_search' %}"
+        >
+            Books
+            <small>Google Books</small>
+        </a>
+
+        <a
+            class="reference-provider-tab"
+            href="{% url 'doi_lookup' %}"
+        >
+            DOI Lookup
+            <small>Crossref</small>
+        </a>
+    </div>
+
+    <section class="paper-search-panel">
+        <form
+            method="get"
+            action="{% url 'book_search' %}"
+            class="paper-search-form"
+            role="search"
+        >
+            <div class="paper-search-input-wrapper">
+                <label
+                    class="visually-hidden"
+                    for="book-search-input"
+                >
+                    Search books
+                </label>
+
+                <span
+                    class="search-field-icon"
+                    aria-hidden="true"
+                >
+                    B
+                </span>
+
+                <input
+                    id="book-search-input"
+                    type="search"
+                    name="q"
+                    value="{{ query }}"
+                    maxlength="200"
+                    placeholder="Search by title, author, or topic"
+                    autocomplete="off"
+                    required
+                >
+            </div>
+
+            <button
+                class="button button-primary paper-search-button"
+                type="submit"
+            >
+                Search books
+            </button>
+        </form>
+
+        <p class="search-provider-note">
+            Results are provided by Google Books. Preview
+            availability depends on the individual book.
+        </p>
+    </section>
+
+    {% if search_error %}
+        <div
+            class="search-error-panel"
+            role="alert"
+        >
+            <div
+                class="search-error-icon"
+                aria-hidden="true"
+            >
+                !
+            </div>
+
+            <div>
+                <h2>Search unavailable</h2>
+
+                <p>{{ search_error }}</p>
+            </div>
+        </div>
+    {% elif search_performed %}
+        <div class="search-results-heading">
+            <div>
+                <span class="eyebrow">
+                    Google Books results
+                </span>
+
+                <h2>
+                    Results for “{{ query }}”
+                </h2>
+            </div>
+
+            <p>
+                {{ total_results }} result{{ total_results|pluralize }}
+                found
+            </p>
+        </div>
+
+        {% if results %}
+            <div class="paper-result-list">
+                {% for result in results %}
+                    <article class="paper-result-card">
+                        <div class="paper-result-main">
+                            <div class="paper-result-badges">
+                                <span class="result-provider-badge">
+                                    Google Books
+                                </span>
+
+                                <span class="result-neutral-badge">
+                                    Book
+                                </span>
+
+                                {% if result.preview_available %}
+                                    <span class="result-open-badge">
+                                        Preview available
+                                    </span>
+                                {% endif %}
+                            </div>
+
+                            <h3>{{ result.title }}</h3>
+
+                            <dl class="paper-metadata">
+                                <div>
+                                    <dt>Authors</dt>
+
+                                    <dd>
+                                        {% if result.authors %}
+                                            {{ result.authors|join:", " }}
+                                        {% else %}
+                                            Not available
+                                        {% endif %}
+                                    </dd>
+                                </div>
+
+                                <div>
+                                    <dt>Year</dt>
+
+                                    <dd>
+                                        {% if result.publication_year %}
+                                            {{ result.publication_year }}
+                                        {% else %}
+                                            Not available
+                                        {% endif %}
+                                    </dd>
+                                </div>
+
+                                <div>
+                                    <dt>Publisher</dt>
+
+                                    <dd>
+                                        {% if result.source_name %}
+                                            {{ result.source_name }}
+                                        {% else %}
+                                            Not available
+                                        {% endif %}
+                                    </dd>
+                                </div>
+
+                                <div>
+                                    <dt>Book ID</dt>
+
+                                    <dd>
+                                        {{ result.external_id }}
+                                    </dd>
+                                </div>
+                            </dl>
+
+                            <div class="paper-description">
+                                <h4>Description</h4>
+
+                                {% if result.description %}
+                                    <p>
+                                        {{ result.description|truncatewords:80 }}
+                                    </p>
+                                {% else %}
+                                    <p class="muted-text">
+                                        Description not available.
+                                    </p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="paper-result-actions">
+                            {% if result.source_url %}
+                                <a
+                                    class="button button-ghost"
+                                    href="{{ result.source_url }}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    View book
+                                </a>
+                            {% endif %}
+
+                            {% if result.open_access_url %}
+                                <a
+                                    class="button button-open-access"
+                                    href="{{ result.open_access_url }}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    Open preview
+                                </a>
+                            {% endif %}
+
+                            <form
+                                method="post"
+                                action="{% url 'save_external_reference' %}"
+                                class="save-reference-form"
+                            >
+                                {% csrf_token %}
+
+                                <input
+                                    type="hidden"
+                                    name="provider"
+                                    value="google_books"
+                                >
+
+                                <input
+                                    type="hidden"
+                                    name="external_id"
+                                    value="{{ result.external_id }}"
+                                >
+
+                                <input
+                                    type="hidden"
+                                    name="return_provider"
+                                    value="book"
+                                >
+
+                                <input
+                                    type="hidden"
+                                    name="return_query"
+                                    value="{{ query }}"
+                                >
+
+                                <input
+                                    type="hidden"
+                                    name="return_page"
+                                    value="{{ page }}"
+                                >
+
+                                <div class="save-reference-field">
+                                    <label
+                                        for="book-folder-{{ forloop.counter }}"
+                                    >
+                                        Save to a research folder
+                                    </label>
+
+                                    <select
+                                        id="book-folder-{{ forloop.counter }}"
+                                        name="folder"
+                                        class="save-reference-select"
+                                    >
+                                        <option value="">
+                                            Save without a folder
+                                        </option>
+
+                                        {% for folder in folders %}
+                                            <option value="{{ folder.id }}">
+                                                {{ folder.name }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <button
+                                    class="button button-primary"
+                                    type="submit"
+                                >
+                                    Save reference
+                                </button>
+                            </form>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+
+            {% if has_previous or has_next %}
+                <nav
+                    class="search-pagination"
+                    aria-label="Book-result pages"
+                >
+                    <div>
+                        {% if has_previous %}
+                            <a
+                                class="button button-ghost"
+                                href="?q={{ query|urlencode }}&amp;page={{ page|add:'-1' }}"
+                            >
+                                ← Previous
+                            </a>
+                        {% endif %}
+                    </div>
+
+                    <span>
+                        Page {{ page }}
+                    </span>
+
+                    <div>
+                        {% if has_next %}
+                            <a
+                                class="button button-ghost"
+                                href="?q={{ query|urlencode }}&amp;page={{ page|add:'1' }}"
+                            >
+                                Next →
+                            </a>
+                        {% endif %}
+                    </div>
+                </nav>
+            {% endif %}
+        {% else %}
+            <section class="search-empty-panel">
+                <div
+                    class="empty-icon"
+                    aria-hidden="true"
+                >
+                    B
+                </div>
+
+                <h2>No books found</h2>
+
+                <p>
+                    Try a broader title, author, or subject.
+                </p>
+            </section>
+        {% endif %}
+    {% else %}
+        <section class="search-welcome-panel">
+            <div class="search-welcome-content">
+                <div
+                    class="search-welcome-icon"
+                    aria-hidden="true"
+                >
+                    B
+                </div>
+
+                <h2>Start with a book search.</h2>
+
+                <p>
+                    Search for textbooks, research books,
+                    programming books, or books about your topic.
+                </p>
+            </div>
+
+            <div class="search-suggestions">
+                <span>Example searches</span>
+
+                <a href="?q=research+methods">
+                    Research methods
+                </a>
+
+                <a href="?q=python+programming">
+                    Python programming
+                </a>
+
+                <a href="?q=climate+change">
+                    Climate change
+                </a>
+            </div>
+        </section>
+    {% endif %}
+</section>
+{% endblock %}
