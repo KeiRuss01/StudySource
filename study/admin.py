@@ -4,8 +4,12 @@ from django.contrib.auth.admin import (
 )
 
 from .models import (
+    CalendarConnection,
     FolderReference,
+    ResearchDeadline,
     ResearchFolder,
+    ResearchImage,
+    ResearchNote,
     SavedReference,
     User,
 )
@@ -216,3 +220,42 @@ class FolderReferenceAdmin(admin.ModelAdmin):
     )
     def folder_owner(self, obj):
         return obj.folder.owner.email
+
+
+@admin.register(ResearchNote)
+class ResearchNoteAdmin(admin.ModelAdmin):
+    list_display = ("title", "owner", "folder", "updated_at")
+    search_fields = ("title", "content", "owner__email", "folder__name")
+    list_filter = ("created_at", "updated_at")
+    autocomplete_fields = ("owner", "folder", "saved_reference")
+    readonly_fields = ("created_at", "updated_at")
+
+
+@admin.register(ResearchDeadline)
+class ResearchDeadlineAdmin(admin.ModelAdmin):
+    list_display = ("title", "owner", "folder", "due_date", "completed")
+    search_fields = ("title", "description", "owner__email", "folder__name")
+    list_filter = ("completed", "due_date")
+    autocomplete_fields = ("owner", "folder")
+    readonly_fields = ("created_at", "updated_at")
+
+
+@admin.register(ResearchImage)
+class ResearchImageAdmin(admin.ModelAdmin):
+    list_display = ("title", "owner", "folder", "created_at")
+    search_fields = ("title", "public_id", "owner__email", "folder__name")
+    autocomplete_fields = ("owner", "folder")
+    readonly_fields = ("image_url", "public_id", "created_at")
+
+
+@admin.register(CalendarConnection)
+class CalendarConnectionAdmin(admin.ModelAdmin):
+    list_display = ("owner", "token_expires_at", "updated_at")
+    search_fields = ("owner__email", "owner__full_name")
+    readonly_fields = (
+        "access_token",
+        "refresh_token",
+        "token_expires_at",
+        "created_at",
+        "updated_at",
+    )

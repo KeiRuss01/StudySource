@@ -1,0 +1,60 @@
+{% extends "study/admin/admin_base.html" %}
+
+{% block title %}Admin Overview — StudySource{% endblock %}
+{% block topbar_title %}Overview{% endblock %}
+
+{% block content %}
+<section class="admin-page">
+    <div class="admin-page-heading">
+        <div>
+            <span class="eyebrow">System overview</span>
+            <h1>Welcome, {{ user.full_name|default:'Administrator' }}.</h1>
+            <p>Monitor student accounts and activity across StudySource.</p>
+        </div>
+        <a class="button button-primary" href="{% url 'admin_user_list' %}">Manage students</a>
+    </div>
+
+    <div class="admin-stat-grid">
+        <article class="admin-stat-card"><span>Total students</span><strong>{{ student_count }}</strong><small>{{ active_student_count }} active accounts</small></article>
+        <article class="admin-stat-card"><span>Research folders</span><strong>{{ folder_count }}</strong><small>Student workspaces</small></article>
+        <article class="admin-stat-card"><span>Saved references</span><strong>{{ reference_count }}</strong><small>Papers and books</small></article>
+        <article class="admin-stat-card"><span>Research notes</span><strong>{{ note_count }}</strong><small>Student-authored notes</small></article>
+        <article class="admin-stat-card"><span>Deadlines</span><strong>{{ deadline_count }}</strong><small>Tracked tasks</small></article>
+        <article class="admin-stat-card"><span>Uploaded images</span><strong>{{ image_count }}</strong><small>Cloudinary assets</small></article>
+    </div>
+
+    <div class="admin-dashboard-grid">
+        <section class="admin-panel">
+            <div class="admin-panel-heading"><div><span class="eyebrow">New accounts</span><h2>Recent students</h2></div><a href="{% url 'admin_user_list' %}">View all →</a></div>
+            {% if recent_students %}
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead><tr><th>Student</th><th>Status</th><th>Joined</th><th></th></tr></thead>
+                        <tbody>
+                            {% for student in recent_students %}
+                                <tr>
+                                    <td><strong>{{ student.full_name }}</strong><small>{{ student.email }}</small></td>
+                                    <td><span class="status-pill {% if student.is_active %}active{% else %}inactive{% endif %}">{% if student.is_active %}Active{% else %}Inactive{% endif %}</span></td>
+                                    <td>{{ student.created_at|date:"M j, Y" }}</td>
+                                    <td><a class="table-link" href="{% url 'admin_user_detail' student.id %}">View</a></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}<div class="admin-empty">No student accounts have been created.</div>{% endif %}
+        </section>
+
+        <section class="admin-panel">
+            <div class="admin-panel-heading"><div><span class="eyebrow">Latest activity</span><h2>Recent folders</h2></div><a href="{% url 'admin_content' %}">View content →</a></div>
+            {% if recent_folders %}
+                <div class="admin-activity-list">
+                    {% for folder in recent_folders %}
+                        <div class="admin-activity-item"><span class="admin-activity-icon">F</span><div><strong>{{ folder.name }}</strong><small>{{ folder.owner.full_name }} · {{ folder.created_at|date:"M j, Y" }}</small></div></div>
+                    {% endfor %}
+                </div>
+            {% else %}<div class="admin-empty">No research folders have been created.</div>{% endif %}
+        </section>
+    </div>
+</section>
+{% endblock %}

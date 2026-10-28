@@ -1,0 +1,44 @@
+{% extends "study/admin/admin_base.html" %}
+
+{% block title %}Students — StudySource Admin{% endblock %}
+{% block topbar_title %}Students{% endblock %}
+
+{% block content %}
+<section class="admin-page">
+    <div class="admin-page-heading compact">
+        <div><span class="eyebrow">Account management</span><h1>Students</h1><p>Review accounts, activity, and system access.</p></div>
+    </div>
+
+    <form class="admin-filter-bar" method="get">
+        <input type="search" name="q" value="{{ query }}" placeholder="Search by name or email">
+        <select name="status">
+            <option value="all" {% if selected_status == 'all' %}selected{% endif %}>All accounts</option>
+            <option value="active" {% if selected_status == 'active' %}selected{% endif %}>Active</option>
+            <option value="inactive" {% if selected_status == 'inactive' %}selected{% endif %}>Inactive</option>
+        </select>
+        <button class="button button-primary" type="submit">Filter</button>
+        {% if query or selected_status != 'all' %}<a class="button button-ghost" href="{% url 'admin_user_list' %}">Clear</a>{% endif %}
+    </form>
+
+    <section class="admin-panel">
+        {% if users %}
+            <div class="admin-table-wrap">
+                <table class="admin-table student-table">
+                    <thead><tr><th>Student</th><th>Folders</th><th>References</th><th>Notes</th><th>Status</th><th>Joined</th><th></th></tr></thead>
+                    <tbody>
+                        {% for student in users %}
+                            <tr>
+                                <td><strong>{{ student.full_name }}</strong><small>{{ student.email }}</small></td>
+                                <td>{{ student.folder_count }}</td><td>{{ student.reference_count }}</td><td>{{ student.note_count }}</td>
+                                <td><span class="status-pill {% if student.is_active %}active{% else %}inactive{% endif %}">{% if student.is_active %}Active{% else %}Inactive{% endif %}</span></td>
+                                <td>{{ student.created_at|date:"M j, Y" }}</td>
+                                <td><a class="table-link" href="{% url 'admin_user_detail' student.id %}">Manage</a></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}<div class="admin-empty"><h2>No students found</h2><p>Try changing the search or account filter.</p></div>{% endif %}
+    </section>
+</section>
+{% endblock %}

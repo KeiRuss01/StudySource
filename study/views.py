@@ -45,6 +45,8 @@ def home(request):
     if request.user.is_authenticated:
         if request.user.role == User.Role.STUDENT:
             return redirect("student_dashboard")
+        if request.user.role == User.Role.ADMIN:
+            return redirect("admin_dashboard")
 
     return render(
         request,
@@ -56,6 +58,8 @@ def about(request):
     if request.user.is_authenticated:
         if request.user.role == User.Role.STUDENT:
             return redirect("student_dashboard")
+        if request.user.role == User.Role.ADMIN:
+            return redirect("admin_dashboard")
 
     return render(
         request,
@@ -66,6 +70,8 @@ def about(request):
 @require_http_methods(["GET", "POST"])
 def signup_view(request):
     if request.user.is_authenticated:
+        if request.user.role == User.Role.ADMIN:
+            return redirect("admin_dashboard")
         return redirect("student_dashboard")
 
     if request.method == "POST":
@@ -98,7 +104,8 @@ def login_view(request):
     if request.user.is_authenticated:
         if request.user.role == User.Role.STUDENT:
             return redirect("student_dashboard")
-
+        if request.user.role == User.Role.ADMIN:
+            return redirect("admin_dashboard")
         return redirect("home")
 
     form = EmailAuthenticationForm(
@@ -129,6 +136,9 @@ def login_view(request):
 
         if user.role == User.Role.STUDENT:
             return redirect("student_dashboard")
+
+        if user.role == User.Role.ADMIN:
+            return redirect("admin_dashboard")
 
         return redirect("home")
 

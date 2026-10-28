@@ -1,6 +1,7 @@
 from django.urls import path
 
 from . import note_views
+from . import admin_views
 from . import deadline_views
 from . import image_views
 from . import reference_views
@@ -14,6 +15,32 @@ urlpatterns = [
     path("signup/", views.signup_view, name="signup"),
     path("login/", views.login_view, name="login"),
     path("logout/", views.logout_view, name="logout"),
+
+    path(
+        "admin-dashboard/",
+        admin_views.admin_dashboard,
+        name="admin_dashboard",
+    ),
+    path(
+        "admin-dashboard/users/",
+        admin_views.admin_user_list,
+        name="admin_user_list",
+    ),
+    path(
+        "admin-dashboard/users/<int:user_id>/",
+        admin_views.admin_user_detail,
+        name="admin_user_detail",
+    ),
+    path(
+        "admin-dashboard/users/<int:user_id>/toggle-active/",
+        admin_views.admin_user_toggle_active,
+        name="admin_user_toggle_active",
+    ),
+    path(
+        "admin-dashboard/content/",
+        admin_views.admin_content,
+        name="admin_content",
+    ),
 
     path(
         "dashboard/",

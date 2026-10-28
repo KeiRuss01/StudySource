@@ -1,0 +1,36 @@
+{% extends "study/admin/admin_base.html" %}
+
+{% block title %}{{ student.full_name }} — StudySource Admin{% endblock %}
+{% block topbar_title %}Student details{% endblock %}
+
+{% block content %}
+<section class="admin-page">
+    <nav class="admin-breadcrumb"><a href="{% url 'admin_user_list' %}">Students</a><span>/</span><span>{{ student.full_name }}</span></nav>
+    <div class="admin-user-hero">
+        <div class="admin-user-identity"><span class="admin-user-large-avatar">{{ student.full_name|slice:':1'|upper }}</span><div><span class="eyebrow">Student account</span><h1>{{ student.full_name }}</h1><p>{{ student.email }}</p></div></div>
+        <form method="post" action="{% url 'admin_user_toggle_active' student.id %}">
+            {% csrf_token %}
+            <button class="button {% if student.is_active %}button-danger-outline{% else %}button-primary{% endif %}" type="submit">{% if student.is_active %}Deactivate account{% else %}Activate account{% endif %}</button>
+        </form>
+    </div>
+
+    <div class="admin-stat-grid admin-user-stats">
+        <article class="admin-stat-card"><span>Folders</span><strong>{{ student.research_folders.count }}</strong></article>
+        <article class="admin-stat-card"><span>References</span><strong>{{ student.saved_references.count }}</strong></article>
+        <article class="admin-stat-card"><span>Notes</span><strong>{{ student.research_notes.count }}</strong></article>
+        <article class="admin-stat-card"><span>Deadlines</span><strong>{{ student.research_deadlines.count }}</strong></article>
+        <article class="admin-stat-card"><span>Images</span><strong>{{ image_count }}</strong></article>
+    </div>
+
+    <div class="admin-profile-grid">
+        <section class="admin-panel">
+            <div class="admin-panel-heading"><div><span class="eyebrow">Workspace</span><h2>Research folders</h2></div></div>
+            {% if folders %}<div class="admin-activity-list">{% for folder in folders %}<div class="admin-activity-item"><span class="admin-activity-icon">F</span><div><strong>{{ folder.name }}</strong><small>Updated {{ folder.updated_at|date:"M j, Y" }}</small></div></div>{% endfor %}</div>{% else %}<div class="admin-empty">No folders yet.</div>{% endif %}
+        </section>
+        <section class="admin-panel admin-account-details">
+            <div class="admin-panel-heading"><div><span class="eyebrow">Account</span><h2>Access details</h2></div></div>
+            <dl><div><dt>Status</dt><dd><span class="status-pill {% if student.is_active %}active{% else %}inactive{% endif %}">{% if student.is_active %}Active{% else %}Inactive{% endif %}</span></dd></div><div><dt>Role</dt><dd>{{ student.get_role_display }}</dd></div><div><dt>Joined</dt><dd>{{ student.created_at|date:"F j, Y" }}</dd></div><div><dt>Last login</dt><dd>{% if student.last_login %}{{ student.last_login|date:"F j, Y, g:i A" }}{% else %}Never{% endif %}</dd></div></dl>
+        </section>
+    </div>
+</section>
+{% endblock %}

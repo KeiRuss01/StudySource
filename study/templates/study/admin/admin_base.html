@@ -1,0 +1,96 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="StudySource administration workspace.">
+    <title>{% block title %}Administration — StudySource{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'study/css/styles.css' %}?v=7">
+    <link rel="stylesheet" href="{% static 'study/css/admin.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'study/css/ui.css' %}?v=2">
+</head>
+<body class="admin-body">
+    <div class="admin-layout">
+        <aside class="admin-sidebar" id="admin-sidebar">
+            <div class="admin-brand-row">
+                <a class="brand admin-brand" href="{% url 'admin_dashboard' %}">
+                    <span class="brand-mark">S</span>
+                    <span>StudySource</span>
+                </a>
+                <button class="admin-sidebar-close" id="admin-sidebar-close" type="button" aria-label="Close navigation">×</button>
+            </div>
+
+            <div class="admin-role-badge">System administration</div>
+
+            <nav class="admin-navigation" aria-label="Admin navigation">
+                <p class="admin-nav-label">Management</p>
+                <a class="admin-nav-link {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}" href="{% url 'admin_dashboard' %}">
+                    <span class="admin-nav-icon">O</span><span>Overview</span>
+                </a>
+                <a class="admin-nav-link {% if request.resolver_match.url_name == 'admin_user_list' or request.resolver_match.url_name == 'admin_user_detail' %}active{% endif %}" href="{% url 'admin_user_list' %}">
+                    <span class="admin-nav-icon">U</span><span>Students</span>
+                </a>
+                <a class="admin-nav-link {% if request.resolver_match.url_name == 'admin_content' %}active{% endif %}" href="{% url 'admin_content' %}">
+                    <span class="admin-nav-icon">C</span><span>Content</span>
+                </a>
+
+            </nav>
+
+            <div class="admin-account">
+                <div class="admin-account-person">
+                    <span class="admin-avatar">{{ user.full_name|default:user.email|slice:':1'|upper }}</span>
+                    <div><strong>{{ user.full_name|default:'Administrator' }}</strong><small>{{ user.email }}</small></div>
+                </div>
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button class="admin-logout" type="submit">Log out</button>
+                </form>
+            </div>
+        </aside>
+
+        <div class="admin-sidebar-overlay" id="admin-sidebar-overlay"></div>
+
+        <div class="admin-main">
+            <header class="admin-topbar">
+                <button class="admin-menu-button" id="admin-menu-button" type="button" aria-label="Open navigation">☰</button>
+                <div>
+                    <small>StudySource administration</small>
+                    <strong>{% block topbar_title %}Overview{% endblock %}</strong>
+                </div>
+                <span class="admin-topbar-user">{{ user.full_name|default:'Administrator' }}</span>
+            </header>
+
+            {% if messages %}
+                <div class="admin-messages">
+                    {% for message in messages %}<div class="message message-{{ message.tags|default:'info' }}">{{ message }}</div>{% endfor %}
+                </div>
+            {% endif %}
+
+            <main class="admin-content">{% block content %}{% endblock %}</main>
+        </div>
+    </div>
+
+    <script>
+        const adminSidebar = document.getElementById("admin-sidebar");
+        const adminOverlay = document.getElementById("admin-sidebar-overlay");
+        const adminMenuButton = document.getElementById("admin-menu-button");
+        const adminCloseButton = document.getElementById("admin-sidebar-close");
+
+        function closeAdminSidebar() {
+            adminSidebar.classList.remove("visible");
+            adminOverlay.classList.remove("visible");
+        }
+
+        adminMenuButton.addEventListener("click", function () {
+            adminSidebar.classList.add("visible");
+            adminOverlay.classList.add("visible");
+        });
+        adminCloseButton.addEventListener("click", closeAdminSidebar);
+        adminOverlay.addEventListener("click", closeAdminSidebar);
+    </script>
+</body>
+</html>
