@@ -4,67 +4,51 @@ services:
     runtime: python
     plan: free
     region: singapore
-
     buildCommand: bash build.sh
     startCommand: gunicorn StudySource.wsgi:application --bind 0.0.0.0:$PORT
 
     envVars:
       - key: DJANGO_DEBUG
         value: "False"
-
       - key: DJANGO_ALLOWED_HOSTS
         value: "studysource.onrender.com"
-
       - key: DJANGO_CSRF_TRUSTED_ORIGINS
         value: "https://studysource.onrender.com"
-
       - key: DJANGO_SECURE_SSL_REDIRECT
         value: "True"
-
       - key: DJANGO_SECRET_KEY
         sync: false
 
       - key: DB_NAME
         sync: false
-
       - key: DB_USER
         sync: false
-
       - key: DB_PASSWORD
         sync: false
-
       - key: DB_HOST
         sync: false
-
       - key: DB_PORT
         value: "5432"
-
       - key: DB_SSLMODE
         value: "require"
 
       - key: CLOUDINARY_CLOUD_NAME
         sync: false
-
       - key: CLOUDINARY_API_KEY
         sync: false
-
       - key: CLOUDINARY_API_SECRET
-        sync: false
-
-      - key: GOOGLE_CALENDAR_CLIENT_ID
-        sync: false
-
-      - key: GOOGLE_CALENDAR_CLIENT_SECRET
-        sync: false
-
-      - key: GOOGLE_CALENDAR_REDIRECT_URI
-        value: "https://studysource.onrender.com/deadlines/calendar/callback/"
-
-      - key: OPENALEX_EMAIL
         sync: false
 
       - key: CROSSREF_EMAIL
         sync: false
-
       - key: GOOGLE_BOOKS_API_KEY
         sync: false
+      - key: OPENALEX_API_KEY
+        sync: false
+
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_CALENDAR_REDIRECT_URI
+        value: "https://studysource.onrender.com/deadlines/calendar/callback/"
