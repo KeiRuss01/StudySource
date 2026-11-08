@@ -19,8 +19,7 @@
             <h1>Look up a DOI.</h1>
 
             <p>
-                Enter a DOI to retrieve bibliographic metadata
-                from Crossref.
+                Enter a DOI to retrieve bibliographic metadata.
             </p>
         </div>
 
@@ -41,7 +40,6 @@
             href="{% url 'paper_search' %}"
         >
             Papers
-            <small>OpenAlex</small>
         </a>
 
         <a
@@ -49,7 +47,6 @@
             href="{% url 'book_search' %}"
         >
             Books
-            <small>Google Books</small>
         </a>
 
         <a
@@ -57,7 +54,6 @@
             href="{% url 'doi_lookup' %}"
         >
             DOI Lookup
-            <small>Crossref</small>
         </a>
     </div>
 
@@ -104,8 +100,7 @@
         </form>
 
         <p class="search-provider-note">
-            Crossref provides bibliographic metadata. The DOI
-            publisher page remains the original source.
+            The DOI publisher page remains the original source.
         </p>
     </section>
 
@@ -131,7 +126,7 @@
         <div class="search-results-heading">
             <div>
                 <span class="eyebrow">
-                    Crossref result
+                    DOI result
                 </span>
 
                 <h2>{{ result.title }}</h2>
@@ -141,10 +136,6 @@
         <article class="paper-result-card">
             <div class="paper-result-main">
                 <div class="paper-result-badges">
-                    <span class="result-provider-badge">
-                        Crossref
-                    </span>
-
                     <span class="result-neutral-badge">
                         {{ result.reference_type|title }}
                     </span>

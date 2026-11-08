@@ -19,8 +19,8 @@
             <h1>Search for academic papers.</h1>
 
             <p>
-                Search OpenAlex for scholarly works, review their
-                publication details, and save useful references to
+                Search scholarly works, review their publication
+                details, and save useful references to
                 your research workspace.
             </p>
         </div>
@@ -42,7 +42,6 @@
             href="{% url 'paper_search' %}"
         >
             Papers
-            <small>OpenAlex</small>
         </a>
 
         <a
@@ -50,7 +49,6 @@
             href="{% url 'book_search' %}"
         >
             Books
-            <small>Google Books</small>
         </a>
 
         <a
@@ -58,7 +56,6 @@
             href="{% url 'doi_lookup' %}"
         >
             DOI Lookup
-            <small>Crossref</small>
         </a>
     </div>
 
@@ -105,8 +102,7 @@
         </form>
 
         <p class="search-provider-note">
-            Results are provided by OpenAlex. Availability differs
-            between publishers and individual records.
+            Availability differs between publishers and individual records.
         </p>
     </section>
 
@@ -132,7 +128,7 @@
         <div class="search-results-heading">
             <div>
                 <span class="eyebrow">
-                    OpenAlex results
+                    Paper results
                 </span>
 
                 <h2>
@@ -152,10 +148,6 @@
                     <article class="paper-result-card">
                         <div class="paper-result-main">
                             <div class="paper-result-badges">
-                                <span class="result-provider-badge">
-                                    OpenAlex
-                                </span>
-
                                 {% if result.reference_type %}
                                     <span class="result-neutral-badge">
                                         {{ result.reference_type|title }}

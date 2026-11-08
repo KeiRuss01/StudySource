@@ -19,8 +19,8 @@
             <h1>Search for books.</h1>
 
             <p>
-                Search Google Books for book information,
-                descriptions, publishers, and preview links.
+                Search books for information, descriptions,
+                publishers, and preview links.
             </p>
         </div>
 
@@ -41,7 +41,6 @@
             href="{% url 'paper_search' %}"
         >
             Papers
-            <small>OpenAlex</small>
         </a>
 
         <a
@@ -49,7 +48,6 @@
             href="{% url 'book_search' %}"
         >
             Books
-            <small>Google Books</small>
         </a>
 
         <a
@@ -57,7 +55,6 @@
             href="{% url 'doi_lookup' %}"
         >
             DOI Lookup
-            <small>Crossref</small>
         </a>
     </div>
 
@@ -104,8 +101,7 @@
         </form>
 
         <p class="search-provider-note">
-            Results are provided by Google Books. Preview
-            availability depends on the individual book.
+            Preview availability depends on the individual book.
         </p>
     </section>
 
@@ -131,7 +127,7 @@
         <div class="search-results-heading">
             <div>
                 <span class="eyebrow">
-                    Google Books results
+                    Book results
                 </span>
 
                 <h2>
@@ -151,10 +147,6 @@
                     <article class="paper-result-card">
                         <div class="paper-result-main">
                             <div class="paper-result-badges">
-                                <span class="result-provider-badge">
-                                    Google Books
-                                </span>
-
                                 <span class="result-neutral-badge">
                                     Book
                                 </span>
