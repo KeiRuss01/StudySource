@@ -136,7 +136,7 @@ h3 { line-height: 1.3; }
 .brand-footer,
 .brand-footer:visited { color: var(--ui-text); }
 
-.page-hero { padding: 64px 0; background: var(--ui-bg); }
+.page-hero { padding: 64px 0; color: var(--ui-text); background: var(--ui-bg); }
 .page-hero h1 { max-width: 760px; margin-bottom: 16px; font-size: clamp(2.25rem, 4vw, 3.3rem); }
 .page-hero p { color: var(--ui-muted); font-size: 1.02rem; }
 .about-grid { gap: 14px; }
