@@ -299,6 +299,22 @@ a.sidebar-link:hover { color: var(--ui-text); background: #f8fafc; }
 .note-detail-card { padding: 25px; }
 .note-detail-content { font-size: .94rem; line-height: 1.75; }
 .deadline-toolbar { display: flex; gap: 9px; }
+.deadline-status-form { margin: 0; }
+.deadline-status-form select {
+    min-height: 43px;
+    padding: 0 34px 0 14px;
+    border: 1px solid var(--ui-border-strong);
+    border-radius: 7px;
+    color: var(--ui-text);
+    background: #fff;
+    font: inherit;
+    cursor: pointer;
+}
+.deadline-status-form select:focus {
+    outline: none;
+    border-color: var(--ui-blue);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .11);
+}
 .deadline-completed { opacity: .72; }
 .image-gallery { gap: 12px; }
 .image-gallery-card { border-radius: 8px; box-shadow: none; }

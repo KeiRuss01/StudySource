@@ -87,6 +87,30 @@ def deadline_sync(request, deadline_id):
 
 
 @login_required
+@require_http_methods(["POST"])
+def deadline_status(request, deadline_id):
+    require_student(request)
+    deadline = get_object_or_404(
+        ResearchDeadline,
+        id=deadline_id,
+        owner=request.user,
+    )
+
+    status = request.POST.get("status")
+    if status not in {"pending", "completed"}:
+        messages.error(request, "That deadline status is not valid.")
+        return redirect("deadline_list")
+
+    deadline.completed = status == "completed"
+    deadline.save(update_fields=["completed", "updated_at"])
+    messages.success(
+        request,
+        f'"{deadline.title}" marked as {status}.',
+    )
+    return redirect("deadline_list")
+
+
+@login_required
 def deadline_list(request):
     require_student(request)
     deadlines = ResearchDeadline.objects.filter(

@@ -155,6 +155,7 @@ urlpatterns = [
         name="deadline_update",
     ),
     path("deadlines/<int:deadline_id>/sync/", deadline_views.deadline_sync, name="deadline_sync"),
+    path("deadlines/<int:deadline_id>/status/", deadline_views.deadline_status, name="deadline_status"),
     path(
         "deadlines/<int:deadline_id>/delete/",
         deadline_views.deadline_delete,

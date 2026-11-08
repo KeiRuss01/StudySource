@@ -24,18 +24,26 @@
                     <div>
                         <div class="note-card-labels">
                             <span class="result-provider-badge">{{ deadline.folder.name }}</span>
-                            {% if deadline.completed %}<span class="result-neutral-badge">Completed</span>{% endif %}
+                            <span class="result-neutral-badge">{% if deadline.completed %}Completed{% else %}Pending{% endif %}</span>
                         </div>
                         <h2>{{ deadline.title }}</h2>
                         {% if deadline.description %}<p>{{ deadline.description|truncatewords:30 }}</p>{% endif %}
                         <small class="note-card-date">Due {{ deadline.due_date|date:"M j, Y" }}</small>
                     </div>
                     <div class="note-card-actions">
-                        <a class="button button-ghost" href="{% url 'deadline_update' deadline.id %}">Edit</a>
                         <form method="post" action="{% url 'deadline_sync' deadline.id %}">
                             {% csrf_token %}
                             <button class="button button-ghost" type="submit">Sync</button>
                         </form>
+                        <form method="post" action="{% url 'deadline_status' deadline.id %}" class="deadline-status-form">
+                            {% csrf_token %}
+                            <label class="visually-hidden" for="deadline-status-{{ deadline.id }}">Status</label>
+                            <select id="deadline-status-{{ deadline.id }}" name="status" aria-label="Change status for {{ deadline.title }}" onchange="this.form.submit()">
+                                <option value="pending"{% if not deadline.completed %} selected{% endif %}>Pending</option>
+                                <option value="completed"{% if deadline.completed %} selected{% endif %}>Completed</option>
+                            </select>
+                        </form>
+                        <a class="button button-ghost" href="{% url 'deadline_update' deadline.id %}">Edit</a>
                         <a class="button button-danger-outline" href="{% url 'deadline_delete' deadline.id %}">Delete</a>
                     </div>
                 </article>

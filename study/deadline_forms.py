@@ -16,7 +16,6 @@ class ResearchDeadlineForm(forms.ModelForm):
             "title",
             "description",
             "due_date",
-            "completed",
         )
         widgets = {
             "title": forms.TextInput(attrs={
@@ -30,7 +29,6 @@ class ResearchDeadlineForm(forms.ModelForm):
             "due_date": forms.DateInput(attrs={
                 "type": "date",
             }),
-            "completed": forms.CheckboxInput(),
         }
 
     def __init__(self, *args, owner=None, **kwargs):
