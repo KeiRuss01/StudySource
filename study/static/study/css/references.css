@@ -412,7 +412,7 @@
 
 .note-card {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 180px;
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: 25px;
     padding: 26px;
     border: 1px solid var(--slate-200);
@@ -456,8 +456,19 @@
 .note-card-actions,
 .folder-note-actions {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
     gap: 9px;
+}
+
+.note-card-actions .button,
+.note-card-actions select {
+    min-height: 43px;
+}
+
+.note-card-actions .deadline-status-form select {
+    min-width: 130px;
 }
 
 .note-linked-reference {
