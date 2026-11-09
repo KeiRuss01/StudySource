@@ -290,6 +290,17 @@ a.sidebar-link:hover { color: var(--ui-text); background: #f8fafc; }
 .paper-result-actions,
 .saved-reference-actions,
 .note-card-actions { border-color: var(--ui-border); }
+.note-card { grid-template-columns: minmax(0, 1fr) auto; }
+.note-card-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 9px;
+}
+.note-card-actions .deadline-status-form { margin: 0; }
+.note-card-actions .deadline-status-form select { min-width: 130px; }
 .result-provider-badge,
 .result-neutral-badge,
 .result-open-badge,
@@ -318,6 +329,21 @@ a.sidebar-link:hover { color: var(--ui-text); background: #f8fafc; }
 .deadline-completed { opacity: .72; }
 .image-gallery { gap: 12px; }
 .image-gallery-card { border-radius: 8px; box-shadow: none; }
+
+@media (max-width: 900px) {
+    .note-card { grid-template-columns: 1fr; }
+    .note-card-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        justify-content: stretch;
+        padding-top: 18px;
+        border-top: 1px solid var(--ui-border);
+    }
+}
+
+@media (max-width: 680px) {
+    .note-card-actions { grid-template-columns: 1fr; }
+}
 
 /* Admin workspace */
 
